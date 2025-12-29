@@ -1,6 +1,7 @@
-//subscription Tier
+// Subscription tier type
 export type Tier = "basic" | "performance" | "champion";
 
+// Tier hierarchy: champion > performance > basic
 export const TIER_HIERARCHY: Record<Tier, number> = {
   basic: 1,
   performance: 2,
@@ -11,10 +12,10 @@ export const TIER_HIERARCHY: Record<Tier, number> = {
 export const TIER_LIMITS: Record<Tier, number> = {
   basic: 5,
   performance: 12,
-  champion: Infinity,  
+  champion: Infinity, // Unlimited
 };
 
-// Pricing  
+// Pricing configuration
 export const TIER_PRICING = {
   basic: { monthly: 29, annual: 290, perClass: 5.8 },
   performance: { monthly: 59, annual: 590, perClass: 4.92 },
@@ -27,18 +28,21 @@ export const FREE_TRIAL_DAYS = 3;
 // Annual discount percentage
 export const ANNUAL_DISCOUNT_PERCENT = 17;
 
+// Tier display names
 export const TIER_DISPLAY_NAMES: Record<Tier, string> = {
   basic: "Basic",
   performance: "Performance",
   champion: "Champion",
 };
 
+// Tier options for filter UIs
 export const TIER_OPTIONS = [
   { value: "basic", label: "Basic" },
   { value: "performance", label: "Performance" },
   { value: "champion", label: "Champion" },
 ] as const;
 
+// Tier descriptions
 export const TIER_DESCRIPTIONS: Record<Tier, string> = {
   basic: "5 classes per month",
   performance: "12 classes per month",
@@ -52,6 +56,7 @@ export const TIER_ACCESS: Record<Tier, string> = {
   champion: "All classes",
 };
 
+// Tier badge colors (Tailwind classes for light/dark mode)
 export const TIER_COLORS: Record<Tier | "none", string> = {
   none: "bg-muted text-muted-foreground",
   basic:
