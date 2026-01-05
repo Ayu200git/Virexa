@@ -22,7 +22,7 @@ interface MapboxContext {
 
 interface MapboxFeature {
   place_name: string;
-  center: [number, number];  
+  center: [number, number];
   text?: string;
   address?: string;
   context?: MapboxContext[];
@@ -77,6 +77,10 @@ export function AddressSearch({
 
   const debouncedQuery = useDebounce(query, 300);
 
+  const token = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
+  // If token is missing, we shouldn't attempt to search
+  const isConfigured = !!token;
+
   const searchAddress = useCallback(async (searchQuery: string) => {
     if (searchQuery.length < 3) {
       setSuggestions([]);
@@ -85,7 +89,7 @@ export function AddressSearch({
 
     const token = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
     if (!token) {
-      console.error("Mapbox access token not configured");
+      // Gracefully fail if token is missing (though input should be disabled)
       return;
     }
 
@@ -146,8 +150,9 @@ export function AddressSearch({
           onChange={handleInputChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-          placeholder={placeholder}
-          className="w-full rounded-lg border border-input bg-background py-3 pl-10 pr-10 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          placeholder={isConfigured ? placeholder : "Location search disabled (missing configuration)"}
+          disabled={!isConfigured}
+          className="w-full rounded-lg border border-input bg-background py-3 pl-10 pr-10 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         />
         {(isLoading || isSearching) && (
           <LoaderIcon className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />

@@ -15,6 +15,7 @@ import { RadiusSelector } from "@/components/app/maps/RadiusSelector";
 import { completeOnboarding } from "@/lib/actions/profile";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { getCurrentPosition, getGeolocationErrorMessage } from "@/lib/utils/geolocation";
 
 type Step = "location" | "radius";
 
@@ -78,25 +79,22 @@ export default function OnboardingPage() {
         <div className="w-full max-w-md">
           <div className="mb-8 flex items-center justify-center gap-3">
             <div
-              className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-all ${
-                step === "location"
+              className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-all ${step === "location"
                   ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
                   : "bg-primary/20 text-primary"
-              }`}
+                }`}
             >
               {step === "radius" ? <Check className="h-5 w-5" /> : "1"}
             </div>
             <div
-              className={`h-1 w-12 rounded-full transition-all ${
-                step === "radius" ? "bg-primary" : "bg-border"
-              }`}
+              className={`h-1 w-12 rounded-full transition-all ${step === "radius" ? "bg-primary" : "bg-border"
+                }`}
             />
             <div
-              className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-all ${
-                step === "radius"
+              className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-all ${step === "radius"
                   ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
                   : "bg-muted text-muted-foreground"
-              }`}
+                }`}
             >
               2
             </div>
@@ -123,6 +121,50 @@ export default function OnboardingPage() {
                     onChange={setLocation}
                     placeholder="Search for your city or address..."
                   />
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">
+                        Or
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    className="w-full h-12 text-base rounded-xl"
+                    onClick={async () => {
+                      setIsSubmitting(true);
+                      setError(null);
+                      try {
+                        const position = await getCurrentPosition();
+                        const { latitude, longitude } = position.coords;
+                        // In a real app we'd reverse geocode here, but for now we set a generic address if token missing
+                        setLocation({
+                          lat: latitude,
+                          lng: longitude,
+                          address: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`, // Fallback
+                        });
+                      } catch (error) {
+                        console.error("Geolocation error:", error);
+                        // Check if it's a GeolocationPositionError by checking for the code property
+                        if (error && typeof error === "object" && "code" in error) {
+                          setError(getGeolocationErrorMessage(error as GeolocationPositionError));
+                        } else {
+                          setError("Could not get location. Please enter manually.");
+                        }
+                      } finally {
+                        setIsSubmitting(false);
+                      }
+                    }}
+                    disabled={isSubmitting}
+                  >
+                    <MapPinIcon className="mr-2 h-4 w-4" />
+                    Use my current location
+                  </Button>
 
                   <Button
                     onClick={handleNext}
@@ -184,7 +226,7 @@ export default function OnboardingPage() {
               )}
             </CardContent>
           </Card>
-          
+
           <p className="mt-6 text-center text-sm text-muted-foreground">
             You can update these preferences anytime in your profile
           </p>

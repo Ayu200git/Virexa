@@ -92,6 +92,7 @@ export function AppHeader() {
                 type="button"
                 className="rounded-md p-2 hover:bg-accent"
                 aria-label="Open menu"
+                suppressHydrationWarning
               >
                 <MenuIcon className="h-5 w-5" />
               </button>

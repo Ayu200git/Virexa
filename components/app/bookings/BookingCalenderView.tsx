@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { startOfToday } from "date-fns";
-import { BookingsCalendar } from "./BookingsCalendar";
-import { DayBookings } from "./DayBookings";
+import { BookingsCalendar } from "./BookingCalender";
+import { DayBookings } from "./DayBooking";
 import type { USER_BOOKINGS_QUERYResult } from "@/sanity.types";
 
 interface BookingsCalendarViewProps {

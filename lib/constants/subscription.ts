@@ -1,57 +1,62 @@
-//subscription Tier
+// Subscription tier type
 export type Tier = "basic" | "performance" | "champion";
 
+// Tier hierarchy
 export const TIER_HIERARCHY: Record<Tier, number> = {
   basic: 1,
   performance: 2,
   champion: 3,
 };
 
-// Monthly class limits per tier
+// Monthly class limits
 export const TIER_LIMITS: Record<Tier, number> = {
   basic: 5,
   performance: 12,
-  champion: Infinity,  
+  champion: Infinity,
 };
 
-// Pricing  
+// Pricing
 export const TIER_PRICING = {
   basic: { monthly: 29, annual: 290, perClass: 5.8 },
   performance: { monthly: 59, annual: 590, perClass: 4.92 },
-  champion: { monthly: 99, annual: 990, perClass: null }, // Unlimited
+  champion: { monthly: 99, annual: 990, perClass: null },
 } as const;
 
-// Free trial duration
+// Free trial
 export const FREE_TRIAL_DAYS = 3;
 
-// Annual discount percentage
+// Annual discount
 export const ANNUAL_DISCOUNT_PERCENT = 17;
 
+// Display names
 export const TIER_DISPLAY_NAMES: Record<Tier, string> = {
   basic: "Basic",
   performance: "Performance",
   champion: "Champion",
 };
 
+// Options
 export const TIER_OPTIONS = [
   { value: "basic", label: "Basic" },
   { value: "performance", label: "Performance" },
   { value: "champion", label: "Champion" },
 ] as const;
 
+// Descriptions
 export const TIER_DESCRIPTIONS: Record<Tier, string> = {
   basic: "5 classes per month",
   performance: "12 classes per month",
   champion: "Unlimited classes",
 };
 
-// Tier class access descriptions
+// Access rules
 export const TIER_ACCESS: Record<Tier, string> = {
   basic: "Basic-tier classes only",
   performance: "Basic + Performance classes",
   champion: "All classes",
 };
 
+// Badge colors
 export const TIER_COLORS: Record<Tier | "none", string> = {
   none: "bg-muted text-muted-foreground",
   basic:
@@ -62,7 +67,7 @@ export const TIER_COLORS: Record<Tier | "none", string> = {
     "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300",
 };
 
-// Tier features for pricing displays
+// Features
 export const TIER_FEATURES: Record<Tier, string[]> = {
   basic: [
     "5 classes per month",

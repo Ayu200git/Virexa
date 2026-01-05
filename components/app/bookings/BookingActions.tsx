@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition, useState } from "react";
-import { cancelBooking, confirmAttendance } from "@/lib/actions/bookings";
+import { cancelBooking, confirmAttendance } from "@/lib/actions/booking";
 
 interface BookingActionsProps {
   bookingId: string;

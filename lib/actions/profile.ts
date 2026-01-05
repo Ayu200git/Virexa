@@ -26,7 +26,7 @@ export type ProfilePreferences = {
   searchRadius: number;
 };
 
-// onboarding complete
+// Complete onboarding - save preferences and set Clerk metadata
 export async function completeOnboarding(
   preferences: ProfilePreferences
 ): Promise<ProfileResult> {
@@ -49,6 +49,8 @@ export async function completeOnboarding(
 
     // Get or create user profile
     const userProfileId = await getOrCreateUserProfile(userId);
+
+    // Update Sanity profile with location preferences
     await writeClient
       .patch(userProfileId)
       .set({
@@ -61,6 +63,7 @@ export async function completeOnboarding(
       })
       .commit();
 
+    // Update Clerk metadata to mark onboarding as complete
     const clerk = await clerkClient();
     await clerk.users.updateUserMetadata(userId, {
       publicMetadata: {
@@ -79,7 +82,7 @@ export async function completeOnboarding(
   }
 }
 
-//update user locationprefrence
+// Update location preferences (from profile page)
 export async function updateLocationPreferences(
   preferences: ProfilePreferences
 ): Promise<ProfileResult> {
@@ -111,6 +114,8 @@ export async function updateLocationPreferences(
     if (!userProfile) {
       return { success: false, error: "User profile not found" };
     }
+
+    // Update Sanity profile
     await writeClient
       .patch(userProfile._id)
       .set({
@@ -133,7 +138,8 @@ export async function updateLocationPreferences(
     return { success: false, error: "Failed to update preferences" };
   }
 }
- //user location preferences
+
+// Get user's location preferences
 export async function getUserPreferences(): Promise<ProfilePreferences | null> {
   try {
     const { userId } = await auth();

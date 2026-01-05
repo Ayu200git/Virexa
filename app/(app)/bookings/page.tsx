@@ -4,10 +4,10 @@ import { USER_BOOKINGS_QUERY } from "@/sanity/lib/queries/bookings";
 import { isPast } from "date-fns";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { BookingsCalendarView } from "@/components/app/bookings/BookingsCalendarView";
+import { BookingsCalendarView } from "@/components/app/bookings/BookingCalenderView";
 import { AttendanceAlert } from "@/components/app/bookings/AttendanceAlert";
 import { BookingCard } from "@/components/app/bookings/BookingCard";
-import { getUsageStats } from "@/lib/subscription";
+import { getUsageStats, getUserTier } from "@/lib/subscription";
 import {
   Card,
   CardContent,
