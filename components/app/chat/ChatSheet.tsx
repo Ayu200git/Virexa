@@ -25,10 +25,21 @@ export function ChatSheet() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+<<<<<<< HEAD
   const { messages, sendMessage, status } = useChat({});
 
   const isLoading = status === "streaming" || status === "submitted";
 
+=======
+  const { messages, sendMessage, status } = useChat({
+    api: "/api/chat",
+  });
+
+  const isLoading = status === "streaming" || status === "submitted";
+
+  // Auto-scroll to bottom when new messages arrive or streaming updates
+  // biome-ignore lint/correctness/useExhaustiveDependencies: trigger scroll on message/loading changes
+>>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
@@ -53,12 +64,23 @@ export function ChatSheet() {
 
   return (
     <>
+<<<<<<< HEAD
+=======
+      {/* Backdrop - only visible on mobile/tablet (< xl) */}
+>>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
       <div
         className="fixed inset-0 z-40 bg-black/50 xl:hidden"
         onClick={closeChat}
         aria-hidden="true"
       />
+<<<<<<< HEAD
       <div className="fixed right-0 top-0 z-50 flex h-full w-full flex-col overscroll-contain border-l border-border bg-background duration-300 animate-in slide-in-from-right sm:w-[448px]">
+=======
+
+      {/* Sidebar */}
+      <div className="fixed right-0 top-0 z-50 flex h-full w-full flex-col overscroll-contain border-l border-border bg-background duration-300 animate-in slide-in-from-right sm:w-[448px]">
+        {/* Header */}
+>>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
         <header className="shrink-0 border-b border-border">
           <div className="flex h-16 items-center justify-between px-6">
             <div className="flex items-center gap-2 font-semibold">
@@ -71,6 +93,10 @@ export function ChatSheet() {
           </div>
         </header>
 
+<<<<<<< HEAD
+=======
+        {/* Messages */}
+>>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
         <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4">
           {messages.length === 0 ? (
             <WelcomeScreen
@@ -89,6 +115,10 @@ export function ChatSheet() {
 
                 return (
                   <div key={message.id} className="space-y-3">
+<<<<<<< HEAD
+=======
+                    {/* Tool call indicators */}
+>>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
                     {hasTools &&
                       toolParts.map((toolPart) => (
                         <ToolCallUI
@@ -98,6 +128,10 @@ export function ChatSheet() {
                         />
                       ))}
 
+<<<<<<< HEAD
+=======
+                    {/* Message content */}
+>>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
                     {hasContent && (
                       <MessageBubble
                         role={message.role}
@@ -109,6 +143,10 @@ export function ChatSheet() {
                 );
               })}
 
+<<<<<<< HEAD
+=======
+              {/* Loading indicator */}
+>>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
               {isLoading && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex gap-3">
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
@@ -123,11 +161,20 @@ export function ChatSheet() {
                   </div>
                 </div>
               )}
+<<<<<<< HEAD
+=======
+
+              {/* Scroll anchor */}
+>>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
               <div ref={messagesEndRef} />
             </div>
           )}
         </div>
 
+<<<<<<< HEAD
+=======
+        {/* Input */}
+>>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
         <div className="border-t border-border px-4 py-4">
           <form onSubmit={handleSubmit} className="flex gap-2">
             <Input

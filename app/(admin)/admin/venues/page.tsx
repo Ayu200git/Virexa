@@ -2,9 +2,15 @@
 
 import { Suspense } from "react";
 import { useParams } from "next/navigation";
+<<<<<<< HEAD
 import { VenueHeader } from "./[id]/VenueHeader";
 import { VenueDetails } from "./[id]/VenueDetails";
 import { VenueDetailSkeleton } from "./[id]/VenueDetailsSkeleton";
+=======
+import { VenueHeader } from "./VenueHeader";
+import { VenueDetails } from "./VenueDetails";
+import { VenueDetailSkeleton } from "./VenueDetailSkeleton";
+>>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
 
 export default function VenueDetailPage() {
   const params = useParams();

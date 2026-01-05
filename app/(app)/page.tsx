@@ -250,11 +250,19 @@ export default async function BookingsPage() {
                 </CardContent>
                 <CardFooter>
                   <SignedOut>
+<<<<<<< HEAD
                     <SignUpButton mode="modal">
                       <Button className="w-full h-12 text-base" variant={isPopular ? "default" : "outline"}>
                         Start Free Trial
                       </Button>
                     </SignUpButton>
+=======
+                    <SignOutButton mode="modal">
+                      <Button className="w-full h-12 text-base" variant={isPopular ? "default" : "outline"} asChild >
+                          Start Free Trial
+                      </Button>
+                    </SignOutButton>
+>>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
                   </SignedOut>
                   <SignedIn>
                     <Button className="w-full h-12 text-base" variant={isPopular ? "default" : "outline"} asChild >
