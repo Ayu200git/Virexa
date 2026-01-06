@@ -22,7 +22,7 @@ export default async function ClassesPage() {
     maxLng: 180,
   };
 
-  if (userPreferences?.location?.lat && userPreferences?.location?.lng) {
+  if (userPreferences?.location?.lat != null && userPreferences?.location?.lng != null) {
     const radiusKm = userPreferences.searchRadius || 50; // Default to 50km if not set
     boundingBox = getBoundingBox(
       userPreferences.location.lat,
@@ -59,19 +59,20 @@ export default async function ClassesPage() {
 
   if (userPreferences?.location?.lat && userPreferences?.location?.lng && userPreferences?.searchRadius) {
     const { filterSessionsByDistance } = await import("@/lib/utils/distance");
-    // Filter out sessions without startTime or venue address before filtering by distance
-    const validSessions = sessionsList.filter(
-      (s) => s.startTime && s.venue?.address?.lat != null && s.venue?.address?.lng != null
+    // For precise distance filtering, we need coordinates
+    const sessionsWithCoords = sessionsList.filter(
+      (s) => s.venue?.address?.lat != null && s.venue?.address?.lng != null
     );
-    const filtered = filterSessionsByDistance(
-      validSessions as any,
+
+    const filteredByDistance = filterSessionsByDistance(
+      sessionsWithCoords as any,
       userPreferences.location.lat,
       userPreferences.location.lng,
       userPreferences.searchRadius
     );
-    filteredSessions = filtered as Session[];
+    filteredSessions = filteredByDistance as Session[];
   } else {
-    // If no location, add placeholder distance
+    // If no user location preferences, show all sessions (wide bounding box was used or skipped)
     filteredSessions = sessionsList.map((session): Session => ({
       ...session,
       distance: 0,

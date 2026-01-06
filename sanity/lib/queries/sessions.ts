@@ -115,10 +115,15 @@ export const FILTERED_SESSIONS_QUERY = defineQuery(`*[
   && startTime > now()
   && status == "scheduled"
   // Bounding box: only fetch sessions where venue is within the geographic rectangle
-  && venue->address.lat >= $minLat
-  && venue->address.lat <= $maxLat
-  && venue->address.lng >= $minLng
-  && venue->address.lng <= $maxLng
+  && (
+    $minLat == -90
+    || (
+      venue->address.lat >= $minLat
+      && venue->address.lat <= $maxLat
+      && venue->address.lng >= $minLng
+      && venue->address.lng <= $maxLng
+    )
+  )
   && ($venueId == "" || venue._ref == $venueId)
   && (count($categoryIds) == 0 || activity->category._ref in $categoryIds)
   && (count($tierLevels) == 0 || activity->tierLevel in $tierLevels)
