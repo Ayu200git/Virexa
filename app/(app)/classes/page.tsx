@@ -3,6 +3,7 @@ import { FILTERED_SESSIONS_QUERY } from "@/sanity/lib/queries/sessions";
 import { USER_BOOKED_SESSION_IDS_QUERY } from "@/sanity/lib/queries/bookings";
 import { auth } from "@clerk/nextjs/server";
 import { ClassesContent } from "@/components/app/classes/ClassesContent";
+import { ClassesMapSidebar } from "@/components/app/maps/ClassesMapSidebar";
 import { format } from "date-fns";
 import { FILTERED_SESSIONS_QUERYResult } from "@/sanity.types";
 import { getUserPreferences } from "@/lib/actions/profile";
@@ -22,8 +23,14 @@ export default async function ClassesPage() {
     maxLng: 180,
   };
 
+  const defaultLocation = { lat: 51.5074, lng: -0.1278 }; // London default
+  const userLocation = {
+    lat: userPreferences?.location?.lat ?? defaultLocation.lat,
+    lng: userPreferences?.location?.lng ?? defaultLocation.lng,
+  };
+
   if (userPreferences?.location?.lat != null && userPreferences?.location?.lng != null) {
-    const radiusKm = userPreferences.searchRadius || 50; // Default to 50km if not set
+    const radiusKm = userPreferences.searchRadius || 50;
     boundingBox = getBoundingBox(
       userPreferences.location.lat,
       userPreferences.location.lng,
@@ -53,39 +60,33 @@ export default async function ClassesPage() {
       : Promise.resolve({ data: [] }),
   ]);
 
-  // Filter sessions by distance if user has location
-  let filteredSessions: Session[] = [];
   const sessionsList = (sessions || []) as FILTERED_SESSIONS_QUERYResult;
+  let filteredSessions: Session[] = [];
 
   if (userPreferences?.location?.lat && userPreferences?.location?.lng && userPreferences?.searchRadius) {
     const { filterSessionsByDistance } = await import("@/lib/utils/distance");
-    // For precise distance filtering, we need coordinates
     const sessionsWithCoords = sessionsList.filter(
       (s) => s.venue?.address?.lat != null && s.venue?.address?.lng != null
     );
 
-    const filteredByDistance = filterSessionsByDistance(
+    filteredSessions = filterSessionsByDistance(
       sessionsWithCoords as any,
       userPreferences.location.lat,
       userPreferences.location.lng,
       userPreferences.searchRadius
-    );
-    filteredSessions = filteredByDistance as Session[];
+    ) as Session[];
   } else {
-    // If no user location preferences, show all sessions (wide bounding box was used or skipped)
     filteredSessions = sessionsList.map((session): Session => ({
       ...session,
       distance: 0,
     }));
   }
+
+  // Grouping logic remains the same
   const groupedSessions = filteredSessions.reduce((acc: any, session) => {
     if (!session.startTime) return acc;
-
     const dateKey = format(new Date(session.startTime), "yyyy-MM-dd");
-
-    if (!acc[dateKey]) {
-      acc[dateKey] = [];
-    }
+    if (!acc[dateKey]) acc[dateKey] = [];
     acc[dateKey].push(session);
     return acc;
   }, {});
@@ -94,17 +95,36 @@ export default async function ClassesPage() {
     a.localeCompare(b)
   ) as any;
 
-  // Filter booked session IDs to remove nulls and satisfy TypeScript
   const sessionIds = (bookedSessionIds || []).filter((id: string | null): id is string => id !== null) as string[];
 
+  // Extract unique venues for the map
+  const venues = Array.from(
+    new Map(
+      filteredSessions
+        .map((s) => s.venue)
+        .filter((v): v is NonNullable<typeof v> => !!v && v.address?.lat != null)
+        .map((v) => [v._id, v])
+    ).values()
+  );
+
   return (
-    <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-8">
-        <ClassesContent
-          groupedSessions={groupedSessionsArray}
-          bookedSessionIds={sessionIds}
-        />
+    <div className="flex flex-col lg:flex-row min-h-screen bg-background">
+      <main className="flex-1 overflow-y-auto px-4 py-8 pointer-events-auto">
+        <div className="container mx-auto">
+          <ClassesContent
+            groupedSessions={groupedSessionsArray}
+            bookedSessionIds={sessionIds}
+          />
+        </div>
       </main>
+
+      {/* Map Sidebar - Hidden on mobile, visible on lg screens */}
+      <aside className="hidden lg:block lg:w-[400px] xl:w-[500px] border-l border-border sticky top-0 h-screen">
+        <ClassesMapSidebar
+          venues={venues as any}
+          userLocation={userLocation}
+        />
+      </aside>
     </div>
   );
 }
