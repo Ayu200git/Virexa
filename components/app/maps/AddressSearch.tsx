@@ -52,7 +52,7 @@ function extractAddressComponents(feature: MapboxFeature) {
     } else if (item.id.startsWith("country")) {
       country = item.text;
     }
-  }
+  };
 
   return { street, city, postcode, country };
 }

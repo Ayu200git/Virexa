@@ -1,6 +1,7 @@
 import "@/app/globals.css"; // 🔥 REQUIRED
 import type { Metadata } from "next";
 import { Providers } from "@/components/providers/Providers";
+import { SanityLive } from "@/sanity/lib/live";
 
 export const metadata: Metadata = {
   title: "Virexa",
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="min-h-screen bg-background text-foreground">
         <Providers>{children}</Providers>
+        <SanityLive />
       </body>
     </html>
   );

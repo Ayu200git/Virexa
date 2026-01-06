@@ -15,9 +15,6 @@ export default async function ClassesPage() {
 
   // Get user preferences (location and search radius)
   const userPreferences = userId ? await getUserPreferences() : null;
-
-  // Calculate bounding box for location filtering
-  // If no user location, use a very wide bounding box (essentially no filter)
   let boundingBox = {
     minLat: -90,
     maxLat: 90,
@@ -43,9 +40,9 @@ export default async function ClassesPage() {
         maxLat: boundingBox.maxLat,
         minLng: boundingBox.minLng,
         maxLng: boundingBox.maxLng,
-        venueId: "", // No venue filter
-        categoryIds: [], // No category filter
-        tierLevels: [], // No tier filter
+        venueId: "",
+        categoryIds: [],
+        tierLevels: [],
       },
     }),
     userId
@@ -80,9 +77,6 @@ export default async function ClassesPage() {
       distance: 0,
     }));
   }
-
-  // Group sessions by day (YYYY-MM-DD or ISO date string key)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const groupedSessions = filteredSessions.reduce((acc: any, session) => {
     if (!session.startTime) return acc;
 
@@ -95,8 +89,6 @@ export default async function ClassesPage() {
     return acc;
   }, {});
 
-  // Convert to array of [key, values] tuples and sort by date
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const groupedSessionsArray = Object.entries(groupedSessions).sort(([a], [b]) =>
     a.localeCompare(b)
   ) as any;
