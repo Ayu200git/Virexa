@@ -1,27 +1,31 @@
 "use client";
 
-import { Suspense } from "react";
-import { useParams } from "next/navigation";
-<<<<<<< HEAD
-import { VenueHeader } from "./[id]/VenueHeader";
-import { VenueDetails } from "./[id]/VenueDetails";
-import { VenueDetailSkeleton } from "./[id]/VenueDetailsSkeleton";
-=======
-import { VenueHeader } from "./VenueHeader";
-import { VenueDetails } from "./VenueDetails";
-import { VenueDetailSkeleton } from "./VenueDetailSkeleton";
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
+import dynamic from "next/dynamic";
 
-export default function VenueDetailPage() {
-  const params = useParams();
-  const documentId = params.id as string;
+const VenuesList = dynamic(
+  () => import("./VanuesList").then((mod) => mod.VenuesList),
+  { ssr: false }
+);
 
+const CreateVenueDialog = dynamic(
+  () => import("./CreateVenueDialog").then((mod) => mod.CreateVenueDialog),
+  { ssr: false }
+);
+
+export default function VenuesPage() {
   return (
     <div className="space-y-6">
-      <Suspense fallback={<VenueDetailSkeleton />}>
-        <VenueHeader documentId={documentId} />
-        <VenueDetails documentId={documentId} />
-      </Suspense>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Venues</h1>
+          <p className="text-muted-foreground">
+            Manage your studio locations and facilities.
+          </p>
+        </div>
+        <CreateVenueDialog />
+      </div>
+
+      <VenuesList />
     </div>
   );
 }

@@ -7,15 +7,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { BookingButton } from "@/components/app/bookings/BookingButton";
-<<<<<<< HEAD
 import { VenueMap } from "@/components/app/maps/venueMap";
 import { PortableText } from "@portabletext/react";
 import { getUserTier, getUserTierInfo } from "@/lib/subscription";
-=======
-import { VenueMap } from "@/components/app/maps/VenueMap";
-import { PortableText } from "@portabletext/react";
-import { getUserTierInfo } from "@/lib/subscription";
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
 import { auth } from "@clerk/nextjs/server";
 import {
   ChevronRight,
@@ -38,7 +32,6 @@ export default async function ClassDetailPage({ params }: PageProps) {
   const { sessionId } = await params;
   const { userId } = await auth();
 
-<<<<<<< HEAD
   // ✅ Get user tier (string or null)
   const userTier = userId ? await getUserTier(userId) : null;
 
@@ -49,64 +42,32 @@ export default async function ClassDetailPage({ params }: PageProps) {
     }),
     userId
       ? sanityFetch({
-          query: USER_SESSION_BOOKING_QUERY,
-          params: { clerkId: userId, sessionId },
-        })
+        query: USER_SESSION_BOOKING_QUERY,
+        params: { clerkId: userId, sessionId },
+      })
       : Promise.resolve({ data: null }),
   ]);
-=======
-  const [{ data: session }, { tier: userTier }, { data: existingBooking }] =
-    await Promise.all([
-      sanityFetch({
-        query: SESSION_BY_ID_QUERY,
-        params: { sessionId },
-      }),
-      getUserTierInfo(),
-      userId
-        ? sanityFetch({
-            query: USER_SESSION_BOOKING_QUERY,
-            params: { clerkId: userId, sessionId },
-          })
-        : Promise.resolve({ data: null }),
-    ]);
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
 
   if (!session || !session.startTime) {
     notFound();
   }
 
-<<<<<<< HEAD
   // ✅ Call getUserTierInfo ONLY if tier exists
   const tierInfo = userTier ? getUserTierInfo(userTier) : null;
-
-=======
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
   const maxCapacity = session.maxCapacity ?? 0;
   const spotsRemaining = maxCapacity - session.currentBookings;
   const isFullyBooked = spotsRemaining <= 0;
   const startDate = new Date(session.startTime);
   const activity = session.activity;
   const venue = session.venue;
-<<<<<<< HEAD
-
   // ✅ Safe key for TIER_COLORS
   const tierLevel = (activity?.tierLevel ?? "basic") as keyof typeof TIER_COLORS;
-=======
-  const tierLevel = activity?.tierLevel ?? "basic";
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
 
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <nav className="mb-6 flex items-center gap-1 text-sm">
-<<<<<<< HEAD
-          <Link href="/classes" className="text-muted-foreground hover:text-primary">
-            Classes
-          </Link>
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          <span className="font-medium">
-=======
           <Link
             href="/classes"
             className="text-muted-foreground hover:text-primary transition-colors"
@@ -115,7 +76,6 @@ export default async function ClassDetailPage({ params }: PageProps) {
           </Link>
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
           <span className="font-medium text-foreground">
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
             {activity?.name ?? "Class"}
           </span>
         </nav>
@@ -138,15 +98,6 @@ export default async function ClassDetailPage({ params }: PageProps) {
                   No image
                 </div>
               )}
-<<<<<<< HEAD
-
-              {/* Tier Badge */}
-              <Badge
-                className={`absolute left-4 top-4 ${TIER_COLORS[tierLevel]} border-0`}
-              >
-                {tierLevel.charAt(0).toUpperCase() + tierLevel.slice(1)} Tier
-              </Badge>
-=======
               {/* Tier Badge */}
               {tierLevel && (
                 <Badge
@@ -155,26 +106,17 @@ export default async function ClassDetailPage({ params }: PageProps) {
                   {tierLevel.charAt(0).toUpperCase() + tierLevel.slice(1)} Tier
                 </Badge>
               )}
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
             </div>
 
             {/* Image Gallery */}
             {activity?.images && activity.images.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-2">
-<<<<<<< HEAD
-                {activity.images.slice(1).map((image: any, i: number) =>
-                  image?.asset?._ref ? (
-                    <div
-                      key={image.asset._ref}
-                      className="relative w-24 h-24 rounded-xl overflow-hidden bg-muted"
-=======
-                {activity.images.slice(1).map((image, i) => {
+                {activity.images.slice(1).map((image: any, i: number) => {
                   if (!image.asset?._ref) return null;
                   return (
                     <div
                       key={image.asset._ref}
                       className="relative w-24 h-24 rounded-xl overflow-hidden bg-muted shrink-0 ring-2 ring-transparent hover:ring-primary transition-all cursor-pointer"
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
                     >
                       <Image
                         src={urlFor(image).width(96).height(96).url()}
@@ -183,14 +125,6 @@ export default async function ClassDetailPage({ params }: PageProps) {
                         className="object-cover"
                       />
                     </div>
-<<<<<<< HEAD
-                  ) : null
-                )}
-              </div>
-            )}
-
-            {/* Venue */}
-=======
                   );
                 })}
               </div>
@@ -216,24 +150,10 @@ export default async function ClassDetailPage({ params }: PageProps) {
             </div>
 
             {/* Venue Card */}
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
             {venue && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-<<<<<<< HEAD
-                    <MapPin className="h-5 w-5" /> Venue
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {venue.amenities?.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {venue.amenities.map((amenity: string) => (
-                        <Badge key={amenity} variant="secondary">
-                          {amenity}
-                        </Badge>
-                      ))}
-=======
                     <MapPin className="h-5 w-5 text-primary" />
                     Venue
                   </CardTitle>
@@ -279,60 +199,14 @@ export default async function ClassDetailPage({ params }: PageProps) {
                         Amenities
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {venue.amenities.map((amenity) => (
+                        {venue.amenities.map((amenity: string) => (
                           <Badge key={amenity} variant="secondary">
                             {amenity}
                           </Badge>
                         ))}
                       </div>
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
                     </div>
                   )}
-                </CardContent>
-              </Card>
-            )}
-<<<<<<< HEAD
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardContent className="space-y-4">
-                <BookingButton
-                  sessionId={session._id}
-                  tierLevel={tierLevel}
-                  isFullyBooked={isFullyBooked}
-                  userTier={tierInfo?.tier ?? null}
-                  existingBookingId={existingBooking?._id ?? null}
-                />
-=======
-
-            {/* Location Map */}
-            {venue && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    Location
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <VenueMap
-                    venue={{
-                      name: venue.name ?? "Venue",
-                      address:
-                        venue.address?.lat != null && venue.address?.lng != null
-                          ? {
-                              lat: venue.address.lat,
-                              lng: venue.address.lng,
-                              fullAddress:
-                                venue.address.fullAddress ?? undefined,
-                              city: venue.address.city ?? undefined,
-                            }
-                          : null,
-                    }}
-                    className="aspect-video rounded-xl overflow-hidden"
-                  />
                 </CardContent>
               </Card>
             )}
@@ -425,7 +299,6 @@ export default async function ClassDetailPage({ params }: PageProps) {
                     existingBookingId={existingBooking?._id ?? null}
                   />
                 </div>
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
               </CardContent>
             </Card>
           </div>

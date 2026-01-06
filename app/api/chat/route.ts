@@ -1,13 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
-<<<<<<< HEAD
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-=======
-import { streamText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { aiTools } from "@/lib/ai/tools";
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
 
 export async function POST(req: Request) {
   try {
@@ -18,140 +10,101 @@ export async function POST(req: Request) {
 
     const { messages } = await req.json();
 
-<<<<<<< HEAD
-    if (!Array.isArray(messages)) {
+    if (!messages || !Array.isArray(messages)) {
+      return new Response("Invalid request: messages array required", { status: 400 });
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey || apiKey === "your_gemini_api_key_here") {
       return new Response(
-        "Invalid request: messages array required",
-        { status: 400 }
+        `0:${JSON.stringify("I'm sorry, but the Gemini API key is not configured. Please add a valid GEMINI_API_KEY to your .env.local file. IMPORTANT: You must RESTART your 'npm run dev' process to apply changes to .env.local.")}\n`,
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-Vercel-AI-Data-Stream": "v1"
+          }
+        }
       );
     }
 
-    // Convert useChat messages → text prompt
-    const prompt = messages
-      .map((m: any) => {
-        if (typeof m.content === "string") return m.content;
-
-        if (Array.isArray(m.parts)) {
-          return m.parts
-            .filter((p: any) => p.type === "text")
-            .map((p: any) => p.text)
-            .join("");
-        }
-
-        return "";
-      })
-      .join("\n");
+    // Initialize inside handler to use current environment variable
+    const genAI = new GoogleGenerativeAI(apiKey);
 
     const systemPrompt = `
-You are a helpful fitness class booking assistant.
+You are a helpful fitness class booking assistant for Virexa.
 
 You help users:
-- Discover fitness classes
+- Discover fitness classes (Yoga, HIIT, Strength, etc.)
 - Learn about venues and locations
-- Understand subscription tiers
-- Get class recommendations
+- Understand subscription tiers (Basic, Performance, Champion)
+- Get personalized class recommendations
 
-Be friendly, concise, and helpful.
+Current User ID: ${userId}
 
-User ID: ${userId}
+Be friendly, concise, and professional. If you don't know something, be honest.
 `;
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash", // ✅ FREE
+      model: "gemini-1.5-flash",
       systemInstruction: systemPrompt,
     });
 
-    const result = await model.generateContentStream(prompt);
+    // Convert history to Gemini format (excluding the last message)
+    const history = messages.slice(0, -1).map((m: any) => ({
+      role: m.role === "user" ? "user" : "model",
+      parts: [{ text: m.content || "" }],
+    }));
 
+    const lastMessage = messages[messages.length - 1]?.content || "";
+
+    const chat = model.startChat({
+      history,
+    });
+
+    const result = await chat.sendMessageStream(lastMessage);
+
+    const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
-        for await (const chunk of result.stream) {
-          const text = chunk.text();
-          if (text) {
-            controller.enqueue(new TextEncoder().encode(text));
+        try {
+          for await (const chunk of result.stream) {
+            const text = chunk.text();
+            if (text) {
+              // Manual Data Stream Protocol formatting: 0:"text"\n
+              const formattedChunk = `0:${JSON.stringify(text)}\n`;
+              controller.enqueue(encoder.encode(formattedChunk));
+            }
           }
+        } catch (streamError: any) {
+          console.error("Streaming error:", streamError);
+          const errorMessage = streamError?.message || "Unknown streaming error";
+          const errorOutput = `\n\n[Chat error: ${errorMessage}]`;
+          controller.enqueue(encoder.encode(`0:${JSON.stringify(errorOutput)}\n`));
+        } finally {
+          controller.close();
         }
-        controller.close();
       },
     });
 
     return new Response(stream, {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
-        "Transfer-Encoding": "chunked",
+        "X-Vercel-AI-Data-Stream": "v1",
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini chat error:", error);
-    return new Response(
-      JSON.stringify({ error: "Failed to process chat request" }),
-      { status: 500 }
-=======
-    if (!messages || !Array.isArray(messages)) {
-      return new Response("Invalid request: messages array required", { status: 400 });
-    }
 
-    // Normalize UIMessage -> ModelMessage
-    // Handle both string content and parts array format
-    const normalizedMessages = messages.map((m: any) => {
-      let content: string;
-      
-      if (typeof m.content === "string") {
-        content = m.content;
-      } else if (m.parts && Array.isArray(m.parts)) {
-        // Extract text from parts array
-        content = m.parts
-          .filter((p: any) => p.type === "text")
-          .map((p: any) => p.text || "")
-          .join("");
-      } else {
-        content = "";
+    const errorMessage = error?.message || "Unknown error";
+    const errorResponse = `0:${JSON.stringify(`Error: ${errorMessage}. (Check if your API key is correct and you have restarted the dev server)`)}\n`;
+
+    return new Response(errorResponse, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Vercel-AI-Data-Stream": "v1"
       }
-
-      return {
-        role: m.role,
-        content,
-      };
     });
-
-    // Add system context with user ID for tools that need it
-    const systemMessage = `You are a helpful fitness class booking assistant for FitPass. You help users:
-- Find and discover fitness classes (yoga, HIIT, pilates, cycling, etc.)
-- Learn about available venues and their locations
-- Understand subscription tiers and pricing
-- Get personalized class recommendations based on their goals
-- Find class schedules and availability
-
-Be friendly, encouraging, and knowledgeable about fitness. When users ask about classes, use the available tools to search the database and provide accurate information.
-
-If a user wants to book a class, guide them to the classes page with the specific class details.
-
-Format your responses in a clear, readable way. Use bullet points for lists and keep responses concise but informative.
-
-The user's Clerk ID is: ${userId}. Use this when calling tools that require user identification, such as getUserBookings.`;
-
-    // Use streamText with the agent's model, tools, and instructions
-    const result = await streamText({
-      model: openai("gpt-4o-mini"),
-      system: systemMessage,
-      messages: normalizedMessages,
-      tools: aiTools,
-      maxSteps: 5,
-    });
-
-    return result.toTextStreamResponse();
-  } catch (error) {
-    console.error("Chat API error:", error);
-    return new Response(
-      JSON.stringify({ 
-        error: "Failed to process chat request",
-        message: error instanceof Error ? error.message : "Unknown error"
-      }),
-      { 
-        status: 500,
-        headers: { "Content-Type": "application/json" }
-      }
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
-    );
   }
 }

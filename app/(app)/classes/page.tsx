@@ -59,7 +59,7 @@ export default async function ClassesPage() {
   // Filter sessions by distance if user has location
   let filteredSessions: Session[] = [];
   const sessionsList = (sessions || []) as FILTERED_SESSIONS_QUERYResult;
-  
+
   if (userPreferences?.location?.lat && userPreferences?.location?.lng && userPreferences?.searchRadius) {
     const { filterSessionsByDistance } = await import("@/lib/utils/distance");
     // Filter out sessions without startTime or venue address before filtering by distance
@@ -101,12 +101,15 @@ export default async function ClassesPage() {
     a.localeCompare(b)
   ) as any;
 
+  // Filter booked session IDs to remove nulls and satisfy TypeScript
+  const sessionIds = (bookedSessionIds || []).filter((id: string | null): id is string => id !== null) as string[];
+
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
         <ClassesContent
           groupedSessions={groupedSessionsArray}
-          bookedSessionIds={bookedSessionIds || []}
+          bookedSessionIds={sessionIds}
         />
       </main>
     </div>

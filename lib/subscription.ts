@@ -1,4 +1,4 @@
- import type { Tier } from "./constants/subscription";
+import type { Tier } from "./constants/subscription";
 import {
   TIER_HIERARCHY,
   TIER_LIMITS,
@@ -54,11 +54,7 @@ export function canAccessClass(
 export function getRemainingBookings(
   tier: Tier,
   usedBookings: number
-<<<<<<< HEAD
-  ): number {
-=======
 ): number {
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
   const limit = TIER_LIMITS[tier];
   if (limit === Infinity) return Infinity;
   return Math.max(limit - usedBookings, 0);

@@ -10,11 +10,7 @@ import {
   Settings,
 } from "lucide-react";
 import { sanityFetch } from "@/sanity/lib/live";
-<<<<<<< HEAD
 import { getUserTierInfo, getUserTier } from "@/lib/subscription";
-=======
-import { getUserTierInfo } from "@/lib/subscription";
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
 import { ProfileEditor } from "./ProfileEditor";
 import { USER_PROFILE_WITH_PREFERENCES_QUERY } from "@/sanity/lib/queries";
 import {
@@ -35,21 +31,14 @@ export default async function ProfilePage() {
     redirect("/sign-in");
   }
 
-<<<<<<< HEAD
   const userTier = await getUserTier(userId);
 
-=======
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
   const [{ data: userProfile }, tierInfo] = await Promise.all([
     sanityFetch({
       query: USER_PROFILE_WITH_PREFERENCES_QUERY,
       params: { clerkId: userId },
     }),
-<<<<<<< HEAD
     getUserTierInfo(userTier ?? "basic"),
-=======
-    getUserTierInfo(),
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
   ]);
 
   return (
@@ -141,13 +130,13 @@ export default async function ProfilePage() {
               <ProfileEditor
                 initialLocation={
                   userProfile?.location?.lat != null &&
-                  userProfile?.location?.lng != null &&
-                  userProfile?.location?.address
+                    userProfile?.location?.lng != null &&
+                    userProfile?.location?.address
                     ? {
-                        lat: userProfile.location.lat,
-                        lng: userProfile.location.lng,
-                        address: userProfile.location.address,
-                      }
+                      lat: userProfile.location.lat,
+                      lng: userProfile.location.lng,
+                      address: userProfile.location.address,
+                    }
                     : null
                 }
                 initialRadius={userProfile?.searchRadius ?? 10}

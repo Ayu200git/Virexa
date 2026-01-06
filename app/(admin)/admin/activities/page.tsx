@@ -1,27 +1,32 @@
 "use client";
 
-import { Suspense } from "react";
-import { useParams } from "next/navigation";
-<<<<<<< HEAD
-import { ActivityHeader } from "./[id]/ActivityHeader";
-import { ActivityDetails } from "./[id]/ActivityDetails";
-import { ActivityDetailSkeleton } from "./[id]/ActivityDetailsSkeleton";
-=======
-import { ActivityHeader } from "./ActivityHeader";
-import { ActivityDetails } from "./ActivityDetails";
-import { ActivityDetailSkeleton } from "./ActivityDetailSkeleton";
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
+import dynamic from "next/dynamic";
 
-export default function ActivityDetailPage() {
-  const params = useParams();
-  const documentId = params.id as string;
+const ActivitiesList = dynamic(
+  () => import("./ActivitiesList").then((mod) => mod.ActivitiesList),
+  { ssr: false }
+);
 
+const CreateActivityDialog = dynamic(
+  () =>
+    import("./CreateActivityDialog").then((mod) => mod.CreateActivityDialog),
+  { ssr: false }
+);
+
+export default function ActivitiesPage() {
   return (
     <div className="space-y-6">
-      <Suspense fallback={<ActivityDetailSkeleton />}>
-        <ActivityHeader documentId={documentId} />
-        <ActivityDetails documentId={documentId} />
-      </Suspense>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Activities</h1>
+          <p className="text-muted-foreground">
+            Manage your fitness class types and categories.
+          </p>
+        </div>
+        <CreateActivityDialog />
+      </div>
+
+      <ActivitiesList />
     </div>
   );
 }

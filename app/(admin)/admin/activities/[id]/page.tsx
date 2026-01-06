@@ -2,13 +2,18 @@
 
 import { Suspense } from "react";
 import { useParams } from "next/navigation";
-import { ActivityHeader } from "./ActivityHeader";
-import { ActivityDetails } from "./ActivityDetails";
-<<<<<<< HEAD
+import dynamic from "next/dynamic";
 import { ActivityDetailSkeleton } from "./ActivityDetailsSkeleton";
-=======
-import { ActivityDetailSkeleton } from "./ActivityDetailSkeleton";
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
+
+const ActivityHeader = dynamic(
+  () => import("./ActivityHeader").then((mod) => mod.ActivityHeader),
+  { ssr: false }
+);
+
+const ActivityDetails = dynamic(
+  () => import("./ActivityDetails").then((mod) => mod.ActivityDetails),
+  { ssr: false }
+);
 
 export default function ActivityDetailPage() {
   const params = useParams();

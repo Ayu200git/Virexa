@@ -2,13 +2,18 @@
 
 import { Suspense } from "react";
 import { useParams } from "next/navigation";
-import { VenueHeader } from "./VenueHeader";
-import { VenueDetails } from "./VenueDetails";
-<<<<<<< HEAD
+import dynamic from "next/dynamic";
 import { VenueDetailSkeleton } from "./VenueDetailsSkeleton";
-=======
-import { VenueDetailSkeleton } from "./VenueDetailSkeleton";
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
+
+const VenueHeader = dynamic(
+  () => import("./VenueHeader").then((mod) => mod.VenueHeader),
+  { ssr: false }
+);
+
+const VenueDetails = dynamic(
+  () => import("./VenueDetails").then((mod) => mod.VenueDetails),
+  { ssr: false }
+);
 
 export default function VenueDetailPage() {
   const params = useParams();

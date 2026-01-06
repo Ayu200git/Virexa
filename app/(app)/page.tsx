@@ -51,60 +51,60 @@ const categories = [
 ];
 
 const stats = [
-  { value: "10,000+", label: "Classes Available"},
-  { value: "500+", label: "Partner Studios"},
+  { value: "10,000+", label: "Classes Available" },
+  { value: "500+", label: "Partner Studios" },
   { value: "50,000+", label: "Active Members" },
   { value: "20+", label: "Cities" },
 ];
 
 const steps = [
-  { number: "01", title: "Choose Your Plan", description:"Select a membership thet fits your personality." },
+  { number: "01", title: "Choose Your Plan", description: "Select a membership thet fits your personality." },
   { number: "02", title: "Book Any Class", description: "Browse Thousands of classes and bookat studios near you." },
   { number: "03", title: "Show Up & Sweat", description: "Check in, work outand track your porgress." }
 ];
 
 
 export default async function BookingsPage() {
-   return (
-     <div className="">
-       {/*hero*/}
-        <section className="relative overflow-hidden bg-background">
-  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5" />
-  <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-primary/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-  <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-primary/15 to-transparent rounded-full blur-3xl translate-y-1/4 -translate-x-1/4" />
+  return (
+    <div className="">
+      {/*hero*/}
+      <section className="relative overflow-hidden bg-background">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-primary/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-primary/15 to-transparent rounded-full blur-3xl translate-y-1/4 -translate-x-1/4" />
 
-  <div className="container relative mx-auto px-24 py-24 md:py-32 lg:py-40">
-    <div className="max-w-4xl mx-auto text-center">
-      <Badge
-        variant="secondary"
-        className="mb-6 px-4 py-1.5 text-sm font-medium bg-surface text-primary border border-border"
-      >
-        <Sparkles className="w-3.5 h-3.5 mr-1.5 text-primary" />
-        {FREE_TRIAL_DAYS}-day free trial on all plans.
-      </Badge>
-
-      <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 text-Black">
-        Your Fitness Journey{" "}
-        <span className="text-primary">Starts Here</span>
-      </h1>
-
-      <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-        One membership thousands of classes, unlimited possibilities.
-        Find your perfect workout near you.
-      </p>
-
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <SignedOut>
-          <SignUpButton mode="modal">
-            <Button
-              size="lg"
-              className="text-lg px-8 h-14 rounded-full bg-primary text-black hover:bg-primary/90"
+        <div className="container relative mx-auto px-24 py-24 md:py-32 lg:py-40">
+          <div className="max-w-4xl mx-auto text-center">
+            <Badge
+              variant="secondary"
+              className="mb-6 px-4 py-1.5 text-sm font-medium bg-surface text-primary border border-border"
             >
-              Start Free Trial
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </SignUpButton>
-        </SignedOut>
+              <Sparkles className="w-3.5 h-3.5 mr-1.5 text-primary" />
+              {FREE_TRIAL_DAYS}-day free trial on all plans.
+            </Badge>
+
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 text-Black">
+              Your Fitness Journey{" "}
+              <span className="text-primary">Starts Here</span>
+            </h1>
+
+            <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
+              One membership thousands of classes, unlimited possibilities.
+              Find your perfect workout near you.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <SignedOut>
+                <SignUpButton mode="modal">
+                  <Button
+                    size="lg"
+                    className="text-lg px-8 h-14 rounded-full bg-primary text-black hover:bg-primary/90"
+                  >
+                    Start Free Trial
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </SignUpButton>
+              </SignedOut>
               {/* <SignIn>
                 <Button size="lg" className="text-lg px-8 h-14 rounded-full" asChild>
                   <Link href="/classes">
@@ -116,25 +116,25 @@ export default async function BookingsPage() {
             </div>
           </div>
         </div>
-       </section>
+      </section>
 
-       {/* stats*/}
-        <section className="border-y border-border bg-surface/40">
-  <div className="container mx-auto px-4 py-12">
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {stats.map((stat) => (
-        <div key={stat.label} className="text-center">
-          <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
-            {stat.value}
-          </div>
-          <div className="text-muted-foreground font-medium">
-            {stat.label}
+      {/* stats*/}
+      <section className="border-y border-border bg-surface/40">
+        <div className="container mx-auto px-4 py-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
+                  {stat.value}
+                </div>
+                <div className="text-muted-foreground font-medium">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
 
       {/*categories*/}
@@ -149,23 +149,23 @@ export default async function BookingsPage() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {categories.map((category) => (
-             <Card key={category.name} className="group cursor-pointer translation-all duration-300 hover:shadow-lg hover:border-primary/50 hover:-translate-y-1 ">
+            <Card key={category.name} className="group cursor-pointer translation-all duration-300 hover:shadow-lg hover:border-primary/50 hover:-translate-y-1 ">
               <CardContent className="p-6 text-center">
                 <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-muted mb-4 group-hover:scale-110 transition-transform duration-300 ${category.color}`}>
-                  <category.icon className="w-7 h-7"/>
-                  
+                  <category.icon className="w-7 h-7" />
+
                 </div>
                 <div className="items-center text-xl text-center">
                   {category.name}
                 </div>
               </CardContent>
-             </Card>
+            </Card>
           ))}
         </div>
       </section>
 
 
-       {/*steps*/}
+      {/*steps*/}
 
       <section className="bg-muted/30 py-20 md:py-28">
         <div className="container mx-auto px-4">
@@ -191,16 +191,16 @@ export default async function BookingsPage() {
                   <p className="text-muted-foreground leading-relaxed">
                     {step.description}
                   </p>
-              </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
-      </section> 
+      </section>
 
-       {/*pricing*/}
+      {/*pricing*/}
 
-       <section className="container mx-auto px-4 py-20 md:py-20">
+      <section className="container mx-auto px-4 py-20 md:py-20">
         <div className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Simple, Transparent Pricing
@@ -213,9 +213,8 @@ export default async function BookingsPage() {
           {(["basic", "performance", "champion"] as Tier[]).map((tier) => {
             const isPopular = tier === "performance";
             return (
-              <Card key={tier} className={`relative transition-all duration-300 hover:shadow-xl ${
-                isPopular ? "border-primary shadow-lg scale-105 md:scale-110" : "hover:-translate-y-1"
-              }`}
+              <Card key={tier} className={`relative transition-all duration-300 hover:shadow-xl ${isPopular ? "border-primary shadow-lg scale-105 md:scale-110" : "hover:-translate-y-1"
+                }`}
               >
                 {isPopular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
@@ -233,8 +232,8 @@ export default async function BookingsPage() {
                 <CardContent className="text-center">
                   <div className="mb-6">
                     <span className="text-5xl font-bold">${TIER_PRICING[tier].monthly}</span>
-                     <span className="text-muted-foreground">/month</span>
-                  </div>  
+                    <span className="text-muted-foreground">/month</span>
+                  </div>
                   <p className="text-sm text-muted-foreground mb-6">
                     {TIER_ACCESS[tier]}
                   </p>
@@ -250,19 +249,11 @@ export default async function BookingsPage() {
                 </CardContent>
                 <CardFooter>
                   <SignedOut>
-<<<<<<< HEAD
                     <SignUpButton mode="modal">
                       <Button className="w-full h-12 text-base" variant={isPopular ? "default" : "outline"}>
                         Start Free Trial
                       </Button>
                     </SignUpButton>
-=======
-                    <SignOutButton mode="modal">
-                      <Button className="w-full h-12 text-base" variant={isPopular ? "default" : "outline"} asChild >
-                          Start Free Trial
-                      </Button>
-                    </SignOutButton>
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
                   </SignedOut>
                   <SignedIn>
                     <Button className="w-full h-12 text-base" variant={isPopular ? "default" : "outline"} asChild >
@@ -274,12 +265,12 @@ export default async function BookingsPage() {
             );
           })}
         </div>
-       </section>
+      </section>
 
-       {/*cta*/}
+      {/*cta*/}
 
       <section className="relative overflow-hidden bg-primary text-primary-foreground">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255, 255, 255, 0.1),transparent_50%)]"/>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255, 255, 255, 0.1),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(255, 255, 255, 0.1),transparent_50%)]" />
         <div className="container relative mx-auto px-4 py-20 md:py-20">
           <div className="max-w-3xl mx-auto text-center">
@@ -291,25 +282,25 @@ export default async function BookingsPage() {
               start your Fintess journey with {FREE_TRIAL_DAYS}-days free trial today.
             </p>
             <SignedOut>
-  <SignUpButton mode="modal">
-    <Button
-      size="lg"
-      variant="secondary"
-      className="text-lg px-10 h-14 rounded-full font-semibold"
-    >
-      Get Started Now
-      <ArrowRight className="ml-2 h-5 w-5" />
-    </Button>
-  </SignUpButton>
-</SignedOut>
+              <SignUpButton mode="modal">
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  className="text-lg px-10 h-14 rounded-full font-semibold"
+                >
+                  Get Started Now
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </SignUpButton>
+            </SignedOut>
 
             <SignedIn>
               <Button size="lg" variant="secondary" className="text-lg px-10 h-14 rounded-full font-semibold" asChild >
                 <Link href="/classes">
-                  Browse Classes 
-                  <ArrowRight className="ml-2 h-5 w-5"/>
+                  Browse Classes
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
-              </Button>          
+              </Button>
             </SignedIn>
             <div className="flex flex-wrap items-center justify-center gap-4 mt-10 text-sm opacity-80">
               <div className="flex items-center gap-2">
@@ -329,18 +320,18 @@ export default async function BookingsPage() {
         </div>
       </section>
 
-       {/*footer*/}
+      {/*footer*/}
       <footer className="border-t bg-muted/20">
         <div className="container mx-auto px-4 py-10">
           <div className="flex flex-col md:flex-row items-center text-muted-foreground mx-auto">
             <Link href="/classes" className="hover:text-foreground transition mx-auto text-center">
-            Classes
+              Classes
             </Link>
             <Link href="/map" className="hover:text-foreground transition mx-auto text-center">
-            Studios
+              Studios
             </Link>
             <Link href="/upgrade" className="hover:text-foreground transition mx-auto text-center">
-            Pricing
+              Pricing
             </Link>
           </div>
           <p className="text-sm text-muted-foreground">

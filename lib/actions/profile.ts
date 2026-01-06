@@ -153,12 +153,22 @@ export async function getUserPreferences(): Promise<ProfilePreferences | null> {
       params: { clerkId: userId },
     });
 
-    if (!userProfile.data?.location || !userProfile.data?.searchRadius) {
+    if (
+      !userProfile.data?.location ||
+      userProfile.data.location.lat === undefined ||
+      userProfile.data.location.lng === undefined ||
+      !userProfile.data.location.address ||
+      !userProfile.data?.searchRadius
+    ) {
       return null;
     }
 
     return {
-      location: userProfile.data.location,
+      location: {
+        lat: userProfile.data.location.lat,
+        lng: userProfile.data.location.lng,
+        address: userProfile.data.location.address,
+      },
       searchRadius: userProfile.data.searchRadius,
     };
   } catch (error) {

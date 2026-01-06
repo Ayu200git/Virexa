@@ -9,11 +9,7 @@ import {
   canAccessClass,
   getRemainingBookings,
 } from "@/lib/subscription";
-<<<<<<< HEAD
 import type { Tier } from "@/lib/constants/subscription";
-=======
-import type { Tier } from "@/lib/subscription";
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
 import {
   SESSION_FOR_BOOKING_QUERY,
   EXISTING_BOOKING_QUERY,
@@ -94,11 +90,7 @@ export async function createBooking(sessionId: string): Promise<BookingResult> {
     }
 
     // Get user's tier
-<<<<<<< HEAD
     const userTier = await getUserTier(userId);
-=======
-    const userTier = await getUserTier();
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
 
     if (!userTier) {
       return {
@@ -120,12 +112,8 @@ export async function createBooking(sessionId: string): Promise<BookingResult> {
     }
 
     // Check monthly limit
-<<<<<<< HEAD
     const usedBookings = session.currentBookings ?? 0;
     const remaining = await getRemainingBookings(userTier, usedBookings);
-=======
-    const remaining = await getRemainingBookings(userId);
->>>>>>> 953c20b6c9406fbd1e7ecb5183cd33da48410d09
     if (remaining <= 0) {
       return {
         success: false,

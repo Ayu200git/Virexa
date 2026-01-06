@@ -262,15 +262,14 @@ export const getRecommendations = tool({
         tierLevel === "champion"
           ? ["basic", "performance", "champion"]
           : tierLevel === "performance"
-          ? ["basic", "performance"]
-          : ["basic"];
+            ? ["basic", "performance"]
+            : ["basic"];
       filter += ` && tierLevel in ${JSON.stringify(tierLevels)}`;
     }
 
     if (preferredDuration) {
-      filter += ` && duration <= ${preferredDuration + 15} && duration >= ${
-        preferredDuration - 15
-      }`;
+      filter += ` && duration <= ${preferredDuration + 15} && duration >= ${preferredDuration - 15
+        }`;
     }
 
     const recommendationsQuery =
@@ -344,46 +343,27 @@ export const getUserBookings = tool({
       type === "past"
         ? AI_USER_PAST_BOOKINGS_QUERY
         : type === "all"
-        ? AI_USER_ALL_BOOKINGS_QUERY
-        : AI_USER_UPCOMING_BOOKINGS_QUERY;
+          ? AI_USER_ALL_BOOKINGS_QUERY
+          : AI_USER_UPCOMING_BOOKINGS_QUERY;
 
     const bookings = await client.fetch(query, { clerkId });
 
     return {
       count: bookings.length,
       type,
-      bookings: bookings.map(
-        (b: {
-          _id: string;
-          status: string;
-          createdAt?: string;
-          attendedAt?: string;
-          classSession?: {
-            _id: string;
-            startTime: string;
-            activity?: {
-              name: string;
-              instructor: string;
-              duration: number;
-            };
-            venue?: {
-              name: string;
-              city: string;
-            };
-          };
-        }) => ({
-          id: b._id,
-          sessionId: b.classSession?._id,
-          status: b.status,
-          bookedAt: b.createdAt,
-          attendedAt: b.attendedAt,
-          class: b.classSession?.activity?.name,
-          instructor: b.classSession?.activity?.instructor,
-          duration: b.classSession?.activity?.duration,
-          dateTime: b.classSession?.startTime,
-          venue: b.classSession?.venue?.name,
-          city: b.classSession?.venue?.city,
-        })
+      bookings: bookings.map((b: any) => ({
+        id: b._id,
+        sessionId: b.classSession?._id,
+        status: b.status,
+        bookedAt: b.createdAt,
+        attendedAt: b.attendedAt,
+        class: b.classSession?.activity?.name,
+        instructor: b.classSession?.activity?.instructor,
+        duration: b.classSession?.activity?.duration,
+        dateTime: b.classSession?.startTime,
+        venue: b.classSession?.venue?.name,
+        city: b.classSession?.venue?.city,
+      })
       ),
     };
   },
