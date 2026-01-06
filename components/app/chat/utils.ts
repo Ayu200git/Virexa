@@ -43,10 +43,6 @@ export function getMessageText(message: UIMessage): string {
   return "";
 }
 
-
-
-
-
 // Check if message has tool calls (parts starting with "tool-")
 // Note: AI SDK parts are intentionally loosely typed, so we extract what we need
 export function getToolParts(message: UIMessage): ToolCallPart[] {
@@ -58,6 +54,23 @@ export function getToolParts(message: UIMessage): ToolCallPart[] {
     .map((part) => {
       // Extract known fields from the part object
       const p = part as Record<string, unknown>;
+
+      // Handle nested toolInvocation (AI SDK 3.3+/4.0+)
+      if (p.toolInvocation) {
+        const toolInvocation = p.toolInvocation as Record<string, unknown>;
+        return {
+          type: "tool-call", // Normalize type
+          toolName: toolInvocation.toolName as string,
+          toolCallId: toolInvocation.toolCallId as string,
+          state: toolInvocation.state as ToolCallPart["state"],
+          input: toolInvocation.args as Record<string, unknown> | undefined,
+          args: toolInvocation.args as Record<string, unknown> | undefined,
+          output: toolInvocation.result as ToolCallPart["output"],
+          result: toolInvocation.result as ToolCallPart["result"],
+        };
+      }
+
+      // Handle flat structure (older versions or specific parts)
       return {
         type: p.type as string,
         toolName: p.toolName as string | undefined,

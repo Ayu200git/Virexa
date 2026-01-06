@@ -39,7 +39,7 @@ export default async function ClassesPage() {
   }
 
   // Fetch data in parallel
-  const [{ data: sessions }, { data: bookedSessionIds }] = await Promise.all([
+  let [{ data: sessions }, { data: bookedSessionIds }] = await Promise.all([
     sanityFetch({
       query: FILTERED_SESSIONS_QUERY,
       params: {
@@ -60,10 +60,102 @@ export default async function ClassesPage() {
       : Promise.resolve({ data: [] }),
   ]);
 
+  let isFallback = false;
+
+  // Fallback to global search if no sessions found in radius
+  if (!sessions || sessions.length === 0) {
+    const globalResult = await sanityFetch({
+      query: FILTERED_SESSIONS_QUERY,
+      params: {
+        minLat: -90,
+        maxLat: 90,
+        minLng: -180,
+        maxLng: 180,
+        venueId: "",
+        categoryIds: [],
+        tierLevels: [],
+      },
+    });
+    if (globalResult.data && globalResult.data.length > 0) {
+      sessions = globalResult.data;
+      isFallback = true;
+    }
+  }
+
+  // MOCK DATA FALLBACK
+  // If database is completely empty, show mock data so user can see functionality
+  if (!sessions || sessions.length === 0) {
+    const nextDay = new Date();
+    nextDay.setDate(nextDay.getDate() + 1);
+    nextDay.setHours(10, 0, 0, 0);
+
+    const nextDay2 = new Date();
+    nextDay2.setDate(nextDay2.getDate() + 2);
+    nextDay2.setHours(14, 0, 0, 0);
+
+    sessions = [
+      {
+        _id: "mock-session-1",
+        startTime: nextDay.toISOString(),
+        maxCapacity: 20,
+        status: "scheduled",
+        currentBookings: 5,
+        activity: {
+          _id: "mock-activity-1",
+          name: "Vinyasa Flow Yoga (Demo)",
+          slug: { current: "vinyasa-flow-demo", _type: "slug" },
+          instructor: "Sarah Instructor",
+          duration: 60,
+          tierLevel: 1,
+          category: { _id: "cat-yoga", name: "Yoga", slug: { current: "yoga", _type: "slug" } }
+        },
+        venue: {
+          _id: "mock-venue-1",
+          name: "Central Studio",
+          slug: { current: "central-studio", _type: "slug" },
+          city: "New York",
+          address: {
+            lat: 40.7128,
+            lng: -74.0060,
+            fullAddress: "123 Broadway, New York, NY"
+          }
+        }
+      },
+      {
+        _id: "mock-session-2",
+        startTime: nextDay2.toISOString(),
+        maxCapacity: 15,
+        status: "scheduled",
+        currentBookings: 12,
+        activity: {
+          _id: "mock-activity-2",
+          name: "HIIT Blast (Demo)",
+          slug: { current: "hiit-blast-demo", _type: "slug" },
+          instructor: "Mike Trainer",
+          duration: 45,
+          tierLevel: 2,
+          category: { _id: "cat-hiit", name: "HIIT", slug: { current: "hiit", _type: "slug" } }
+        },
+        venue: {
+          _id: "mock-venue-2",
+          name: "Downtown Gym",
+          slug: { current: "downtown-gym", _type: "slug" },
+          city: "New York",
+          address: {
+            lat: 40.7238,
+            lng: -74.0060,
+            fullAddress: "456 Main St, New York, NY"
+          }
+        }
+      }
+    ] as any;
+    isFallback = true;
+  }
+
   const sessionsList = (sessions || []) as FILTERED_SESSIONS_QUERYResult;
   let filteredSessions: Session[] = [];
 
-  if (userPreferences?.location?.lat && userPreferences?.location?.lng && userPreferences?.searchRadius) {
+  if (!isFallback && userPreferences?.location?.lat && userPreferences?.location?.lng && userPreferences?.searchRadius) {
     const { filterSessionsByDistance } = await import("@/lib/utils/distance");
     const sessionsWithCoords = sessionsList.filter(
       (s) => s.venue?.address?.lat != null && s.venue?.address?.lng != null

@@ -25,11 +25,10 @@ export function ChatSheet() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { messages, sendMessage, status } = useChat({});
+  const { messages, sendMessage, status, error } = useChat();
 
   const isLoading = status === "streaming" || status === "submitted";
 
-  // Auto-scroll to bottom when new messages arrive or streaming updates
   // biome-ignore lint/correctness/useExhaustiveDependencies: trigger scroll on message/loading changes
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -132,6 +131,24 @@ export function ChatSheet() {
                   </div>
                 </div>
               )}
+
+              {/* Error Message */}
+              {error && (
+                <div className="flex gap-3 p-4 rounded-xl bg-destructive/10 text-destructive text-sm" role="alert">
+                  <Bot className="h-4 w-4 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Something went wrong</p>
+                    <p className="opacity-90">{error.message}</p>
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="mt-2 text-xs underline underline-offset-2 hover:opacity-100 font-medium"
+                    >
+                      Reload to retry
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Scroll anchor */}
               <div ref={messagesEndRef} />
             </div>

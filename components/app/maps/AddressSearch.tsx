@@ -78,8 +78,8 @@ export function AddressSearch({
   const debouncedQuery = useDebounce(query, 300);
 
   const token = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
-  // If token is missing, we shouldn't attempt to search
-  const isConfigured = !!token;
+  // Fallback to OpenStreetMap if token is missing
+  const isConfigured = true;
 
   const searchAddress = useCallback(async (searchQuery: string) => {
     if (searchQuery.length < 3) {
@@ -88,20 +88,45 @@ export function AddressSearch({
     }
 
     const token = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
-    if (!token) {
-      // Gracefully fail if token is missing (though input should be disabled)
-      return;
-    }
 
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-          searchQuery
-        )}.json?access_token=${token}&types=address,place,locality,neighborhood`
-      );
-      const data = await response.json();
-      setSuggestions(data.features || []);
+      let features = [];
+
+      if (token) {
+        // Use Mapbox if token exists
+        const response = await fetch(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+            searchQuery
+          )}.json?access_token=${token}&types=address,place,locality,neighborhood`
+        );
+        const data = await response.json();
+        features = data.features || [];
+      } else {
+        // Use OpenStreetMap (Nominatim) fallback
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+            searchQuery
+          )}&format=json&addressdetails=1&limit=5`
+        );
+        const data = await response.json();
+
+        // Map Nominatim results to Mapbox feature structure
+        features = data.map((item: any) => ({
+          place_name: item.display_name,
+          center: [parseFloat(item.lon), parseFloat(item.lat)],
+          text: item.name || item.display_name.split(',')[0],
+          address: item.address.road || item.address.pedestrian || "",
+          context: [
+            { id: 'place', text: item.address.city || item.address.town || item.address.village },
+            { id: 'postcode', text: item.address.postcode },
+            { id: 'country', text: item.address.country },
+            { id: 'region', text: item.address.state }
+          ].filter((x) => x.text)
+        }));
+      }
+
+      setSuggestions(features);
     } catch (error) {
       console.error("Error fetching address:", error);
       setSuggestions([]);

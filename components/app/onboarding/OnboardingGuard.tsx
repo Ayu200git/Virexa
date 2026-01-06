@@ -17,16 +17,16 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
         if (!isLoaded) return;
         if (!user) return;
 
-        if(pathname?.startsWith("/onboarding")) return;
+        if (pathname?.startsWith("/onboarding")) return;
 
-        if(pathname?.startsWith("/studio")) return;
+        if (pathname?.startsWith("/studio")) return;
 
         const hasOnboarded = user.publicMetadata?.hasOnboarded as | boolean | undefined;
 
-        if(hasOnboarded) {
+        if (!hasOnboarded) {
             router.push("/onboarding");
         }
-    }, [isLoaded, user, pathname,router]);
+    }, [isLoaded, user, pathname, router]);
 
     return <>{children}</>;
 }

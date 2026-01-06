@@ -1,10 +1,11 @@
+import { ToolLoopAgent } from "ai";
 import { google } from "@ai-sdk/google";
 import { aiTools } from "./tools";
 
-// Create the fitness assistant agent using Gemini 1.5 Flash (Free Tier)
-export const fitnessModel = google("gemini-1.5-flash");
-
-export const fitnessInstructions = `You are a helpful fitness class booking assistant for Virexa. You help users:
+// Create the fitness assistant agent using AI SDK 6 Beta ToolLoopAgent with Gemini 2.5 Flash
+export const fitnessAgent = new ToolLoopAgent({
+    model: google("gemini-2.5-flash"),
+    instructions: `You are a helpful fitness class booking assistant for Virexa. You help users:
 - Find and discover fitness classes (yoga, HIIT, pilates, cycling, etc.)
 - Learn about available venues and their locations
 - Understand subscription tiers and pricing
@@ -15,6 +16,6 @@ Be friendly, encouraging, and knowledgeable about fitness. When users ask about 
 
 If a user wants to book a class, guide them to the classes page with the specific class details.
 
-Format your responses in a clear, readable way. Use bullet points for lists and keep responses concise but informative.`;
-
-export { aiTools };
+Format your responses in a clear, readable way. Use bullet points for lists and keep responses concise but informative.`,
+    tools: aiTools,
+});
