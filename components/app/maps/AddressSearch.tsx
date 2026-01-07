@@ -175,8 +175,7 @@ export function AddressSearch({
           onChange={handleInputChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-          placeholder={isConfigured ? placeholder : "Location search disabled (missing configuration)"}
-          disabled={!isConfigured}
+          placeholder={placeholder}
           className="w-full rounded-lg border border-input bg-background py-3 pl-10 pr-10 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         />
         {(isLoading || isSearching) && (
