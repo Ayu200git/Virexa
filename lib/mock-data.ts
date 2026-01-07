@@ -78,7 +78,7 @@ export const MOCK_ACTIVITIES = [
         category: MOCK_CATEGORIES[2],
         tierLevel: "basic",
         difficulty: "Intermediate",
-        videoUrl: "https://www.youtube.com/watch?v=gGGvNtTk3W0",
+        videoUrl: "https://www.youtube.com/watch?v=v7AYKMP6rOE",
         imageUrl: "https://images.unsplash.com/photo-1534787238916-9ba6764efd4f?auto=format&fit=crop&w=800&q=80",
     },
     {

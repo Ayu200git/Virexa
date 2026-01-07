@@ -10,7 +10,6 @@ export async function syncUserSubscription() {
         if (!userId) return { success: false, error: "Unauthorized" };
 
         // Simply revalidating the path will trigger the server components 
-        // to call getUserTier again, which performs the Clerk -> Sanity sync.
         revalidatePath("/profile");
         revalidatePath("/(app)/profile", "page");
         revalidatePath("/");
@@ -28,13 +27,32 @@ export async function updateUserTier(tier: Tier) {
         if (!userId) return { success: false, error: "Unauthorized" };
 
         const clerk = await clerkClient();
+
+        // 1. Update Clerk Metadata
         await clerk.users.updateUserMetadata(userId, {
             publicMetadata: {
-                plan: tier, // Standardize on 'plan' key
-                tier: tier, // Set multiple keys for robustness
+                plan: tier,
+                tier: tier,
                 subscriptionTier: tier
             }
         });
+
+        // 2. Sync to Sanity immediately (for "payout" consistency)
+        // We import these dynamically to avoid circular deps if any, 
+        // or just standard top-level if safe. 
+        // Using top-level imports from existing project pattern.
+        const { client } = await import("@/sanity/lib/client");
+        const { writeClient } = await import("@/sanity/lib/writeClient");
+        const { USER_PROFILE_BY_CLERK_ID_QUERY } = await import("@/sanity/lib/queries/bookings");
+
+        const profile = await client.fetch(USER_PROFILE_BY_CLERK_ID_QUERY, { clerkId: userId });
+
+        if (profile) {
+            await writeClient
+                .patch(profile._id)
+                .set({ subscriptionTier: tier })
+                .commit();
+        }
 
         revalidatePath("/profile");
         revalidatePath("/");

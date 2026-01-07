@@ -23,21 +23,8 @@ export function PricingCards({ currentTier }: PricingCardsProps) {
     const router = useRouter();
 
     const handleUpgrade = (tier: Tier) => {
-        setPendingTier(tier);
-        startTransition(async () => {
-            try {
-                const result = await updateUserTier(tier);
-                if (result.success) {
-                    router.refresh();
-                } else {
-                    console.error(result.error);
-                }
-            } catch (e) {
-                console.error(e);
-            } finally {
-                setPendingTier(null);
-            }
-        });
+        const interval = isAnnual ? "year" : "month";
+        router.push(`/checkout?tier=${tier}&interval=${interval}`);
     };
 
     const tiers: Tier[] = ["basic", "performance", "champion"];

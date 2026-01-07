@@ -5,9 +5,11 @@ import { SanityLive } from "@/sanity/lib/live";
 
 export const metadata: Metadata = {
   title: "Virexa",
-  description: "Fitness booking platform",
+  description: "Fitness classes booking platform",
   icons: {
-    icon: "/virexa.png",
+    icon: "/virexa1.png",
+    shortcut: "/virexa1.png",
+    apple: "/virexa1.png",
   },
 };
 
