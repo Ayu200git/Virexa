@@ -3,6 +3,7 @@ import { sanityFetch } from "@/sanity/lib/live";
 import { isPast } from "date-fns";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import NextImage from "next/image";
 import {
   Card,
   CardContent,
@@ -36,11 +37,7 @@ import {
   TIER_DISPLAY_NAMES,
   TIER_ACCESS,
 } from "@/lib/constants/subscription";
-import { icon } from "leaflet";
-import { classSessionType } from "@/sanity/schemaTypes/classSessionType";
-import { title } from "process";
 import { SignedIn, SignedOut, SignIn, SignOutButton, SignUpButton } from "@clerk/nextjs";
-import { relative } from "path";
 
 const categories = [
   { name: "Yoga", icon: Heart, classes: "2,400+", color: "text-rose-500" },
@@ -58,61 +55,73 @@ const stats = [
 ];
 
 const steps = [
-  { number: "01", title: "Choose Your Plan", description: "Select a membership thet fits your personality." },
-  { number: "02", title: "Book Any Class", description: "Browse Thousands of classes and bookat studios near you." },
-  { number: "03", title: "Show Up & Sweat", description: "Check in, work outand track your porgress." }
+  { number: "01", title: "Choose Your Plan", description: "Select a membership that fits your lifestyle." },
+  { number: "02", title: "Book Any Class", description: "Browse thousands of classes and book at studios near you." },
+  { number: "03", title: "Show Up & Sweat", description: "Check in, work out and track your progress." }
 ];
 
 
-export default async function BookingsPage() {
+export default async function DashboardPage() {
   return (
     <div className="">
-      {/*hero*/}
-      <section className="relative overflow-hidden bg-background">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5" />
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-primary/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-primary/15 to-transparent rounded-full blur-3xl translate-y-1/4 -translate-x-1/4" />
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-black min-h-[80vh] flex items-center">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 z-0">
+          <NextImage
+            src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=2000&q=90"
+            alt="Premium Fitness"
+            fill
+            className="object-cover opacity-60"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+        </div>
 
-        <div className="container relative mx-auto px-24 py-24 md:py-32 lg:py-40">
-          <div className="max-w-4xl mx-auto text-center">
+        <div className="container relative z-10 mx-auto px-6 md:px-12 lg:px-24 py-32">
+          <div className="max-w-3xl">
             <Badge
               variant="secondary"
-              className="mb-6 px-4 py-1.5 text-sm font-medium bg-surface text-primary border border-border"
+              className="mb-8 px-5 py-2 text-xs font-black bg-primary text-black border-0 uppercase tracking-widest shadow-[0_0_20px_rgba(228,96,68,0.4)]"
             >
-              <Sparkles className="w-3.5 h-3.5 mr-1.5 text-primary" />
-              {FREE_TRIAL_DAYS}-day free trial on all plans.
+              <Sparkles className="w-3.5 h-3.5 mr-2" />
+              {FREE_TRIAL_DAYS}-Day Free Trial Now Live
             </Badge>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 text-Black">
-              Your Fitness Journey{" "}
-              <span className="text-primary">Starts Here</span>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 text-white leading-[0.9]">
+              ELEVEATE YOUR <span className="text-primary italic">POTENTIAL</span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-              One membership thousands of classes, unlimited possibilities.
-              Find your perfect workout near you.
+            <p className="text-xl md:text-2xl text-white/70 mb-12 max-w-xl font-medium leading-relaxed">
+              Access the world's most elite fitness studios with one membership.
+              No limits. No excuses. Just results.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-6">
               <SignedOut>
                 <SignUpButton mode="modal">
                   <Button
                     size="lg"
-                    className="text-lg px-8 h-14 rounded-full bg-primary text-black hover:bg-primary/90"
+                    className="text-lg px-10 h-16 rounded-full bg-primary text-black hover:bg-white transition-all hover:scale-105 font-bold shadow-xl border-none"
                   >
                     Start Free Trial
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </SignUpButton>
               </SignedOut>
-              {/* <SignIn>
-                <Button size="lg" className="text-lg px-8 h-14 rounded-full" asChild>
+              <SignedIn>
+                <Button
+                  size="lg"
+                  className="text-lg px-10 h-16 rounded-full bg-white text-black hover:bg-primary transition-all hover:scale-105 font-bold shadow-xl border-none"
+                  asChild
+                >
                   <Link href="/classes">
-                    Browse Classes
-                    <ArrowRight className="ml-2 h-5 w-6"/>
+                    Explore Classes
+                    <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
-              </SignIn> */}
+              </SignedIn>
             </div>
           </div>
         </div>
@@ -149,13 +158,12 @@ export default async function BookingsPage() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {categories.map((category) => (
-            <Card key={category.name} className="group cursor-pointer translation-all duration-300 hover:shadow-lg hover:border-primary/50 hover:-translate-y-1 ">
+            <Card key={category.name} className="group cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-primary/50 hover:-translate-y-1">
               <CardContent className="p-6 text-center">
                 <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-muted mb-4 group-hover:scale-110 transition-transform duration-300 ${category.color}`}>
                   <category.icon className="w-7 h-7" />
-
                 </div>
-                <div className="items-center text-xl text-center">
+                <div className="text-xl font-medium">
                   {category.name}
                 </div>
               </CardContent>
@@ -206,7 +214,7 @@ export default async function BookingsPage() {
             Simple, Transparent Pricing
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Choose Plan thet fits your fitness rotine. All Plans includes a{" "} {FREE_TRIAL_DAYS}-days free trial.
+            Choose a plan that fits your fitness routine. All plans include a {FREE_TRIAL_DAYS}-day free trial.
           </p>
         </div>
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -278,8 +286,8 @@ export default async function BookingsPage() {
               Ready to transform your fitness?
             </h2>
             <p className="text-xl opacity-90 mb-10 max-w-2xl mx-auto">
-              Join 50,000+ members who've discovered a better way to stay fit.
-              start your Fintess journey with {FREE_TRIAL_DAYS}-days free trial today.
+              Join 50,000+ members who&apos;ve discovered a better way to stay fit.
+              Start your fitness journey with a {FREE_TRIAL_DAYS}-day free trial today.
             </p>
             <SignedOut>
               <SignUpButton mode="modal">
@@ -309,7 +317,7 @@ export default async function BookingsPage() {
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4" />
-                <span>Cancle Anytime</span>
+                <span>Cancel Anytime</span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4" />

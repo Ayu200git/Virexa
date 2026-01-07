@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
-import { CheckCircleIcon, Clock, MapPin, User } from "lucide-react";
+import NextImage from "next/image";
+import { CheckCircleIcon, Clock, MapPin, User, Sparkles } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
 import { format } from "date-fns";
 import type { FILTERED_SESSIONS_QUERYResult } from "@/sanity.types";
@@ -35,22 +35,21 @@ export function SessionCard({
   return (
     <Link href={`/classes/${session._id}`}>
       <Card
-        className={`group gap-0 overflow-hidden p-0 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl ${
-          isBooked ? "ring-2 ring-primary ring-offset-2" : ""
-        }`}
+        className={`group gap-0 overflow-hidden p-0 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl ${isBooked ? "ring-2 ring-primary ring-offset-2" : ""
+          }`}
       >
         {/* Image */}
         <div className="relative aspect-video overflow-hidden bg-muted">
           {activity.image ? (
-            <Image
-              src={urlFor(activity.image).width(400).height(225).url()}
+            <NextImage
+              src={typeof activity.image === 'string' ? activity.image : urlFor(activity.image).width(400).height(225).url()}
               alt={activity.name ?? "Class"}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
-            <div className="flex h-full items-center justify-center text-muted-foreground">
-              No image
+            <div className="flex h-full items-center justify-center bg-gradient-to-br from-muted to-background">
+              <Sparkles className="h-10 w-10 text-muted-foreground/20" />
             </div>
           )}
 
@@ -59,9 +58,9 @@ export function SessionCard({
 
           {/* Tier Badge */}
           <Badge
-            className={`absolute left-3 top-3 border-0 ${TIER_COLORS[tierLevel] || TIER_COLORS.basic}`}
+            className={`absolute left-3 top-3 border-0 ${TIER_COLORS[tierLevel as keyof typeof TIER_COLORS] || TIER_COLORS.basic}`}
           >
-            {tierLevel.charAt(0).toUpperCase() + tierLevel.slice(1)}
+            {String(tierLevel).charAt(0).toUpperCase() + String(tierLevel).slice(1)}
           </Badge>
 
           {/* Status Badge */}

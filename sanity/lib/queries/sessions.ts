@@ -60,6 +60,7 @@ export const SESSION_BY_ID_QUERY = defineQuery(`*[
     tierLevel,
     description,
     images,
+    videoUrl,
     category->{
       _id,
       name,

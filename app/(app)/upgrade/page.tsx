@@ -1,5 +1,6 @@
 import { PricingTable } from "@clerk/nextjs";
 import Link from "next/link";
+import NextImage from "next/image";
 import {
   Loader2,
   ArrowLeft,
@@ -10,6 +11,8 @@ import {
 import { TIER_DISPLAY_NAMES } from "@/lib/constants/subscription";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { auth } from "@clerk/nextjs/server";
+import { getUserTier } from "@/lib/subscription-server";
 
 interface PageProps {
   searchParams: Promise<{
@@ -20,41 +23,55 @@ interface PageProps {
 
 export default async function UpgradePage({ searchParams }: PageProps) {
   const { required, sessionId } = await searchParams;
+  const { userId } = await auth();
+  const userTier = userId ? await getUserTier(userId) : "basic";
 
   const requiredTierName = required
     ? TIER_DISPLAY_NAMES[required as keyof typeof TIER_DISPLAY_NAMES] ||
-      required
+    required
     : null;
 
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="border-b bg-gradient-to-br from-primary/10 via-background to-primary/5">
-        <div className="container mx-auto px-4 py-12 text-center">
-          <Badge variant="secondary" className="mb-4">
+      <div className="relative border-b overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <NextImage
+            src="https://images.unsplash.com/photo-1571902258032-78a99d6a7545?auto=format&fit=crop&w=1600&q=80"
+            alt="Fitness background"
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/95 via-primary/80 to-background/90" />
+        </div>
+
+        <div className="container relative z-10 mx-auto px-4 py-16 text-center text-white">
+          <Badge variant="secondary" className="mb-4 bg-white/20 text-white border-0 backdrop-blur-md">
             <Sparkles className="h-3 w-3 mr-1" />
             3-day free trial on all plans
           </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">
             {requiredTierName ? (
               <>
                 Upgrade to{" "}
-                <span className="text-primary">{requiredTierName}</span>
+                <span className="text-white underline decoration-white/30 decoration-4">
+                  {requiredTierName}
+                </span>
               </>
             ) : (
               <>
-                Choose Your <span className="text-primary">Plan</span>
+                Choose Your <span className="text-white underline decoration-white/30 decoration-4">Plan</span>
               </>
             )}
           </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto font-medium">
             {requiredTierName
               ? `This class requires a ${requiredTierName} subscription or higher. Choose a plan below to start booking.`
               : "Unlock access to thousands of fitness classes with flexible monthly plans."}
           </p>
           {sessionId && (
-            <p className="text-primary text-sm mt-4 font-medium">
-              After subscribing, you&apos;ll be able to book your class
+            <p className="text-white/60 text-sm mt-6 font-bold uppercase tracking-widest animate-pulse">
+              Instant Access After Subscription
             </p>
           )}
         </div>
@@ -150,6 +167,8 @@ export default async function UpgradePage({ searchParams }: PageProps) {
             }
           />
         </div>
+
+
 
         {/* Features Section */}
         <div className="mt-16 max-w-4xl mx-auto">

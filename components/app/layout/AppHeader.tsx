@@ -9,6 +9,7 @@ import {
   UserButton,
   useAuth,
 } from "@clerk/nextjs";
+import NextImage from "next/image";
 import { cn } from "@/lib/utils";
 import {
   Sheet,
@@ -18,7 +19,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useState } from "react";
-import { Dumbbell, MenuIcon } from "lucide-react";
+import { MenuIcon } from "lucide-react";
 
 const navItems = [
   { href: "/classes", label: "Classes" },
@@ -42,8 +43,16 @@ export function AppHeader() {
           href={isSignedIn ? "/classes" : "/"}
           className="flex items-center gap-2 text-xl font-bold"
         >
-          <Dumbbell className="h-6 w-6 text-primary" />
-          <span>Virexa</span>
+          <NextImage
+            src="/virexa.png"
+            alt="Virexa"
+            width={50}
+            height={50}
+            className="h-15 w-15 object-contain"
+          />
+          <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Virexa
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">

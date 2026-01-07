@@ -1,7 +1,7 @@
 import { createAgentUIStreamResponse } from "ai";
 import { fitnessAgent } from "@/lib/ai/agent";
 import { auth } from "@clerk/nextjs/server";
-import { getUserTier } from "@/lib/subscription";
+import { getUserTier } from "@/lib/subscription-server";
 import { getUserPreferences } from "@/lib/actions/profile";
 
 export async function POST(request: Request) {
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
     // Fetch user context in parallel
     const [tier, preferences] = await Promise.all([
-      getUserTier(),
+      getUserTier(clerkId),
       getUserPreferences(),
     ]);
 

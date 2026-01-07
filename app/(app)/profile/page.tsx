@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
+import NextImage from "next/image";
 import {
   MapPinIcon,
   TargetIcon,
@@ -10,8 +10,10 @@ import {
   Settings,
 } from "lucide-react";
 import { sanityFetch } from "@/sanity/lib/live";
-import { getUserTierInfo, getUserTier } from "@/lib/subscription";
+import { getUserTierInfo } from "@/lib/subscription";
+import { getUserTier } from "@/lib/subscription-server";
 import { ProfileEditor } from "./ProfileEditor";
+import { SubscriptionSync } from "./SubscriptionSync";
 import { USER_PROFILE_WITH_PREFERENCES_QUERY } from "@/sanity/lib/queries";
 import {
   Card,
@@ -60,7 +62,7 @@ export default async function ProfilePage() {
             <CardContent>
               <div className="flex items-center gap-4">
                 {userProfile?.imageUrl ? (
-                  <Image
+                  <NextImage
                     src={userProfile.imageUrl}
                     alt="Profile"
                     width={72}
@@ -101,6 +103,7 @@ export default async function ProfilePage() {
                   >
                     {tierInfo.tier || "None"}
                   </Badge>
+                  <SubscriptionSync />
                   <Button asChild size="sm">
                     <Link href="/upgrade">
                       {tierInfo.tier ? "Manage" : "Upgrade"}

@@ -83,72 +83,18 @@ export default async function ClassesPage() {
   }
 
   // MOCK DATA FALLBACK
-  // If database is completely empty, show mock data so user can see functionality
-  if (!sessions || sessions.length === 0) {
-    const nextDay = new Date();
-    nextDay.setDate(nextDay.getDate() + 1);
-    nextDay.setHours(10, 0, 0, 0);
+  // If database is completely empty or few sessions, use the new mock data system
+  if (!sessions || sessions.length < 5) {
+    const { generateMockSessions } = await import("@/lib/mock-data");
+    const mockSessions = generateMockSessions();
 
-    const nextDay2 = new Date();
-    nextDay2.setDate(nextDay2.getDate() + 2);
-    nextDay2.setHours(14, 0, 0, 0);
-
-    sessions = [
-      {
-        _id: "mock-session-1",
-        startTime: nextDay.toISOString(),
-        maxCapacity: 20,
-        status: "scheduled",
-        currentBookings: 5,
-        activity: {
-          _id: "mock-activity-1",
-          name: "Vinyasa Flow Yoga (Demo)",
-          slug: { current: "vinyasa-flow-demo", _type: "slug" },
-          instructor: "Sarah Instructor",
-          duration: 60,
-          tierLevel: 1,
-          category: { _id: "cat-yoga", name: "Yoga", slug: { current: "yoga", _type: "slug" } }
-        },
-        venue: {
-          _id: "mock-venue-1",
-          name: "Central Studio",
-          slug: { current: "central-studio", _type: "slug" },
-          city: "New York",
-          address: {
-            lat: 40.7128,
-            lng: -74.0060,
-            fullAddress: "123 Broadway, New York, NY"
-          }
-        }
-      },
-      {
-        _id: "mock-session-2",
-        startTime: nextDay2.toISOString(),
-        maxCapacity: 15,
-        status: "scheduled",
-        currentBookings: 12,
-        activity: {
-          _id: "mock-activity-2",
-          name: "HIIT Blast (Demo)",
-          slug: { current: "hiit-blast-demo", _type: "slug" },
-          instructor: "Mike Trainer",
-          duration: 45,
-          tierLevel: 2,
-          category: { _id: "cat-hiit", name: "HIIT", slug: { current: "hiit", _type: "slug" } }
-        },
-        venue: {
-          _id: "mock-venue-2",
-          name: "Downtown Gym",
-          slug: { current: "downtown-gym", _type: "slug" },
-          city: "New York",
-          address: {
-            lat: 40.7238,
-            lng: -74.0060,
-            fullAddress: "456 Main St, New York, NY"
-          }
-        }
-      }
-    ] as any;
+    // Merge or replace depending on count
+    if (!sessions || sessions.length === 0) {
+      sessions = mockSessions;
+    } else {
+      // Just add a few to existing
+      sessions = [...(sessions as any), ...mockSessions.slice(0, 10)];
+    }
     isFallback = true;
   }
 

@@ -5,10 +5,10 @@ import { revalidatePath } from "next/cache";
 import { client } from "@/sanity/lib/client";
 import { writeClient } from "@/sanity/lib/writeClient";
 import {
-  getUserTier,
   canAccessClass,
   getRemainingBookings,
 } from "@/lib/subscription";
+import { getUserTier } from "@/lib/subscription-server";
 import type { Tier } from "@/lib/constants/subscription";
 import {
   SESSION_FOR_BOOKING_QUERY,

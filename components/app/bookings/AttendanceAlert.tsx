@@ -2,7 +2,7 @@
 
 import { format, addHours, differenceInMinutes } from "date-fns";
 import Link from "next/link";
-import Image from "next/image";
+import NextImage from "next/image";
 import TimeAgo from "react-timeago";
 import { urlFor } from "@/sanity/lib/image";
 import { CheckCircle2Icon, TimerIcon, ZapIcon } from "lucide-react";
@@ -136,11 +136,10 @@ export function AttendanceAlert({ bookings }: AttendanceAlertProps) {
                     >
                       <div className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-muted shadow-sm transition-transform group-hover:scale-105">
                         {classSession.activity?.image ? (
-                          <Image
-                            src={urlFor(classSession.activity.image)
-                              .width(112)
-                              .height(112)
-                              .url()}
+                          <NextImage
+                            src={typeof classSession.activity.image === 'string'
+                              ? classSession.activity.image
+                              : urlFor(classSession.activity.image).width(112).height(112).url()}
                             alt={classSession.activity.name ?? "Class"}
                             fill
                             className="object-cover"

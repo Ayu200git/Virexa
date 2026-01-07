@@ -2,7 +2,6 @@ import { ToolLoopAgent } from "ai";
 import { google } from "@ai-sdk/google";
 import { aiTools } from "./tools";
 
-// Create the fitness assistant agent using AI SDK 6 Beta ToolLoopAgent with Gemini 2.5 Flash
 export const fitnessAgent = new ToolLoopAgent({
     model: google("gemini-2.5-flash"),
     instructions: `You are a helpful fitness class booking assistant for Virexa. You help users:

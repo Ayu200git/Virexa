@@ -1,4 +1,4 @@
-import "@/app/globals.css"; // 🔥 REQUIRED
+import "@/app/globals.css";
 import type { Metadata } from "next";
 import { Providers } from "@/components/providers/Providers";
 import { SanityLive } from "@/sanity/lib/live";
@@ -6,6 +6,9 @@ import { SanityLive } from "@/sanity/lib/live";
 export const metadata: Metadata = {
   title: "Virexa",
   description: "Fitness booking platform",
+  icons: {
+    icon: "/virexa.png",
+  },
 };
 
 export default function RootLayout({

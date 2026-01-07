@@ -5,11 +5,14 @@ import { urlFor } from "@/sanity/lib/image";
 import { format } from "date-fns";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
+import NextImage from "next/image";
 import { BookingButton } from "@/components/app/bookings/BookingButton";
 import { VenueMap } from "@/components/app/maps/venueMap";
+import { VideoPlayer } from "@/components/app/classes/VideoPlayer";
+import { LockedVideoSection } from "@/components/app/classes/LockedVideoSection";
 import { PortableText } from "@portabletext/react";
-import { getUserTier, getUserTierInfo } from "@/lib/subscription";
+import { getUserTierInfo } from "@/lib/subscription";
+import { getUserTier } from "@/lib/subscription-server";
 import { auth } from "@clerk/nextjs/server";
 import {
   ChevronRight,
@@ -35,7 +38,7 @@ export default async function ClassDetailPage({ params }: PageProps) {
   // ✅ Get user tier (string or null)
   const userTier = userId ? await getUserTier(userId) : null;
 
-  const [{ data: session }, { data: existingBooking }] = await Promise.all([
+  let [{ data: session }, { data: existingBooking }] = await Promise.all([
     sanityFetch({
       query: SESSION_BY_ID_QUERY,
       params: { sessionId },
@@ -47,6 +50,13 @@ export default async function ClassDetailPage({ params }: PageProps) {
       })
       : Promise.resolve({ data: null }),
   ]);
+
+  // MOCK DATA HANDLING
+  if (!session && sessionId.startsWith("mock-")) {
+    const { generateMockSessions } = await import("@/lib/mock-data");
+    const mockSessions = generateMockSessions();
+    session = mockSessions.find(s => s._id === sessionId) as any;
+  }
 
   if (!session || !session.startTime) {
     notFound();
@@ -85,17 +95,19 @@ export default async function ClassDetailPage({ params }: PageProps) {
           <div className="lg:col-span-2 space-y-6">
             {/* Hero Image */}
             <div className="relative aspect-video rounded-2xl overflow-hidden bg-muted">
-              {activity?.images?.[0] ? (
-                <Image
-                  src={urlFor(activity.images[0]).width(800).height(450).url()}
-                  alt={activity.name ?? "Class"}
+              {(activity && ((activity as any).image || activity?.images?.[0])) ? (
+                <NextImage
+                  src={typeof ((activity as any).image || activity?.images?.[0]) === 'string'
+                    ? ((activity as any).image || activity?.images?.[0])
+                    : urlFor((activity as any).image || activity?.images?.[0]).width(800).height(450).url()}
+                  alt={(activity as any)?.name ?? "Class"}
                   fill
                   className="object-cover"
                   priority
                 />
               ) : (
-                <div className="flex h-full items-center justify-center text-muted-foreground">
-                  No image
+                <div className="flex h-full items-center justify-center bg-gradient-to-br from-muted to-background">
+                  <Sparkles className="h-12 w-12 text-muted-foreground/20" />
                 </div>
               )}
               {/* Tier Badge */}
@@ -118,7 +130,7 @@ export default async function ClassDetailPage({ params }: PageProps) {
                       key={image.asset._ref}
                       className="relative w-24 h-24 rounded-xl overflow-hidden bg-muted shrink-0 ring-2 ring-transparent hover:ring-primary transition-all cursor-pointer"
                     >
-                      <Image
+                      <NextImage
                         src={urlFor(image).width(96).height(96).url()}
                         alt={`${activity.name ?? "Class"} ${i + 2}`}
                         fill
@@ -149,6 +161,15 @@ export default async function ClassDetailPage({ params }: PageProps) {
               )}
             </div>
 
+            {/* Gated Video Player Section */}
+            {activity?.videoUrl && (
+              <LockedVideoSection
+                sessionId={sessionId}
+                videoUrl={activity.videoUrl}
+                isRealBooked={!!existingBooking && (existingBooking.status === "confirmed" || existingBooking.status === "attended")}
+              />
+            )}
+
             {/* Venue Card */}
             {venue && (
               <Card>
@@ -162,7 +183,7 @@ export default async function ClassDetailPage({ params }: PageProps) {
                   <div className="flex gap-4">
                     {venue.images?.[0] && (
                       <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-muted shrink-0">
-                        <Image
+                        <NextImage
                           src={urlFor(venue.images[0])
                             .width(96)
                             .height(96)

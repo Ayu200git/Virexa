@@ -623,6 +623,13 @@
         },
         "optional": true
       },
+      "videoUrl": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "duration": {
         "type": "objectAttribute",
         "value": {

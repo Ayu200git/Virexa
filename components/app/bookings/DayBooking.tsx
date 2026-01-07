@@ -2,7 +2,7 @@
 
 import { format, isSameDay, isToday, isPast } from "date-fns";
 import Link from "next/link";
-import Image from "next/image";
+import NextImage from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import { CalendarIcon, ClockIcon, MapPinIcon } from "lucide-react";
 import {
@@ -89,11 +89,10 @@ export function DayBookings({ bookings, selectedDate }: DayBookingsProps) {
               {/* Image */}
               <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted">
                 {booking.classSession.activity?.image ? (
-                  <Image
-                    src={urlFor(booking.classSession.activity.image)
-                      .width(64)
-                      .height(64)
-                      .url()}
+                  <NextImage
+                    src={typeof booking.classSession.activity.image === 'string'
+                      ? booking.classSession.activity.image
+                      : urlFor(booking.classSession.activity.image).width(64).height(64).url()}
                     alt={booking.classSession.activity.name || "Class"}
                     fill
                     className="object-cover"

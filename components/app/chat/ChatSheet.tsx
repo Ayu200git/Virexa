@@ -60,8 +60,8 @@ export function ChatSheet() {
         onClick={closeChat}
         aria-hidden="true"
       />
-      {/* Sidebar */}
-      <div className="fixed right-0 top-0 z-50 flex h-full w-full flex-col overscroll-contain border-l border-border bg-background duration-300 animate-in slide-in-from-right sm:w-[448px]">
+      {/* Sidebar - responsive widths and animations */}
+      <div className="fixed right-0 top-0 z-50 flex h-full w-full flex-col overscroll-contain border-l border-border bg-background duration-300 animate-in slide-in-from-right sm:w-[448px] lg:shadow-2xl">
         {/* Header */}
         <header className="shrink-0 border-b border-border">
           <div className="flex h-16 items-center justify-between px-6">
@@ -132,19 +132,44 @@ export function ChatSheet() {
                 </div>
               )}
 
-              {/* Error Message */}
+              {/* Error Message with Friendly UI */}
               {error && (
-                <div className="flex gap-3 p-4 rounded-xl bg-destructive/10 text-destructive text-sm" role="alert">
-                  <Bot className="h-4 w-4 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-semibold">Something went wrong</p>
-                    <p className="opacity-90">{error.message}</p>
-                    <button
-                      onClick={() => window.location.reload()}
-                      className="mt-2 text-xs underline underline-offset-2 hover:opacity-100 font-medium"
-                    >
-                      Reload to retry
-                    </button>
+                <div className="mx-2 mb-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="flex flex-col gap-3 rounded-2xl bg-destructive/5 p-5 text-sm border border-destructive/10" role="alert">
+                    <div className="flex items-center gap-2 font-bold text-destructive">
+                      <Bot className="h-5 w-5" />
+                      Assistance Interrupted
+                    </div>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {error.message?.includes("quota")
+                        ? "I'm currently taking a quick breather due to high demand. Please wait a moment and I'll be ready to help you again shortly!"
+                        : error.message?.includes("fetch") || error.message?.includes("network")
+                          ? "I'm having a bit of trouble connecting to my service. Please check your internet connection and try again."
+                          : "I encountered an unexpected issue while processing your request. I'm ready to try again whenever you are."}
+                    </p>
+                    <div className="flex gap-2 pt-2">
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => {
+                          const lastUserMessage = [...messages].reverse().find(m => m.role === 'user');
+                          if (lastUserMessage) {
+                            sendMessage({ text: getMessageText(lastUserMessage) });
+                          }
+                        }}
+                        className="h-9 px-4 font-bold bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm transition-all active:scale-95"
+                      >
+                        Try Again
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.location.reload()}
+                        className="h-9 px-4 text-xs border-destructive/20 text-destructive hover:bg-destructive/5 transition-all"
+                      >
+                        Reload Page
+                      </Button>
+                    </div>
                   </div>
                 </div>
               )}

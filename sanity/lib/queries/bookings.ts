@@ -24,7 +24,8 @@ export const USER_BOOKINGS_QUERY = defineQuery(`*[
       name,
       slug,
       duration,
-      "image": images[0]
+      "image": images[0],
+      videoUrl
     },
     venue->{
       _id,
@@ -52,7 +53,8 @@ export const USER_UPCOMING_BOOKINGS_QUERY = defineQuery(`*[
       name,
       slug,
       duration,
-      "image": images[0]
+      "image": images[0],
+      videoUrl
     },
     venue->{
       _id,

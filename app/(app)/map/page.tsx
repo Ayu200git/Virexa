@@ -12,9 +12,16 @@ export default async function MapPage() {
     const userPreferences = userId ? await getUserPreferences() : null;
 
     // Fetch upcoming sessions to get venue locations
-    const { data: sessions } = await sanityFetch({
+    let { data: sessions } = await sanityFetch({
         query: UPCOMING_SESSIONS_QUERY,
     });
+
+    // MOCK DATA FALLBACK
+    if (!sessions || sessions.length < 2) {
+        const { generateMockSessions } = await import("@/lib/mock-data");
+        const mockSessions = generateMockSessions();
+        sessions = (sessions || []).concat(mockSessions as any);
+    }
 
     // Extract venues from sessions and filter out duplicates and those without coordinates
     const venues = (sessions || [])

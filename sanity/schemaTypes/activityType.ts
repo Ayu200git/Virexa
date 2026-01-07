@@ -73,6 +73,17 @@ export const activityType = defineType({
       },
     }),
     defineField({
+      name: "videoUrl",
+      title: "Video URL",
+      type: "url",
+      group: "media",
+      description: "URL for the class video (YouTube, Vimeo, etc.)",
+      validation: (Rule) =>
+        Rule.uri({
+          scheme: ["http", "https"],
+        }),
+    }),
+    defineField({
       name: "duration",
       type: "number",
       group: "settings",
@@ -123,9 +134,8 @@ export const activityType = defineType({
       const tierBadge = tierLevel ? `[${tierLevel.toUpperCase()}]` : "";
       return {
         title: `${title} ${tierBadge}`,
-        subtitle: `${instructor || "No instructor"} • ${
-          category || "No category"
-        }`,
+        subtitle: `${instructor || "No instructor"} • ${category || "No category"
+          }`,
         media,
       };
     },

@@ -12,11 +12,21 @@ import {
 } from "./constants/subscription";
 
 /**
- * Map Clerk plan key → application tier
+ * Map Clerk plan key → application tier (Static Mapper)
  */
-export function getUserTier(planKey?: string | null): Tier {
-  if (planKey === "champion") return "champion";
-  if (planKey === "performance") return "performance";
+export function mapPlanToTier(planKey?: string | null): Tier {
+  if (!planKey) return "basic";
+  const normalizedKey = planKey.toString().toLowerCase().trim();
+
+  // If the key is an object string, we want to look inside it
+  if (normalizedKey.includes("champion") || normalizedKey.includes("unlimited")) return "champion";
+  if (normalizedKey.includes("performance") || normalizedKey.includes("pro") || normalizedKey.includes("advanced")) return "performance";
+
+  // Explicitly return performance if it's the 12-class plan mentioned by user
+  if (normalizedKey.includes("12_classes") || normalizedKey.includes("72")) return "performance";
+  // Explicitly return champion if it's the unlimited plan
+  if (normalizedKey.includes("unlimited") || normalizedKey.includes("99")) return "champion";
+
   return "basic";
 }
 

@@ -1,4 +1,3 @@
-// Note: AI SDK 6 beta has evolving types - disabling TS checking for tool definitions
 import { tool } from "ai";
 import { z } from "zod";
 import { client } from "@/sanity/lib/client";
@@ -12,7 +11,6 @@ import {
 import { defineQuery } from "next-sanity";
 
 // Search for classes by name, category, or instructor
-// IMPORTANT: Only returns classes that have at least one future session scheduled
 export const searchClasses = tool({
   description:
     "Search for fitness classes by name, category, instructor, or tier level. Only returns classes with upcoming sessions available. Use this to help users find classes they're interested in.",
@@ -104,20 +102,20 @@ export const getClassSessions = tool({
       sessions: sessions.map(
         (s: {
           _id: string;
-          startTime: string;
-          maxCapacity: number;
+          startTime: string | null;
+          maxCapacity: number | null;
           currentBookings: number;
           activity: {
-            name: string;
-            instructor: string;
-            duration: number;
-            tierLevel: string;
-          };
-          venue: { name: string; city: string };
+            name: string | null;
+            instructor: string | null;
+            duration: number | null;
+            tierLevel: string | null;
+          } | null;
+          venue: { name: string | null; city: string | null } | null;
         }) => ({
           id: s._id,
-          startTime: s.startTime,
-          spotsAvailable: s.maxCapacity - s.currentBookings,
+          startTime: s.startTime ?? "",
+          spotsAvailable: (s.maxCapacity ?? 0) - s.currentBookings,
           activity: s.activity,
           venue: s.venue,
         })
