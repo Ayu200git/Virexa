@@ -43,6 +43,8 @@ export default async function ProfilePage() {
     getUserTierInfo(userTier ?? "basic"),
   ]);
 
+  console.log(userProfile, userTier, "userProfile>>>");
+
   return (
     <div className="min-h-screen bg-background">
       {/* Page Header */}

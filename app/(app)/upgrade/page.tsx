@@ -1,4 +1,4 @@
-import { PricingTable } from "@clerk/nextjs";
+import { PricingCards } from "@/components/app/upgrade/PricingCards";
 import Link from "next/link";
 import NextImage from "next/image";
 import {
@@ -37,7 +37,7 @@ export default async function UpgradePage({ searchParams }: PageProps) {
       <div className="relative border-b overflow-hidden">
         <div className="absolute inset-0 z-0">
           <NextImage
-            src="https://images.unsplash.com/photo-1571902258032-78a99d6a7545?auto=format&fit=crop&w=1600&q=80"
+            src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=80"
             alt="Fitness background"
             fill
             className="object-cover"
@@ -80,92 +80,7 @@ export default async function UpgradePage({ searchParams }: PageProps) {
       <main className="container mx-auto px-4 py-12">
         {/* Pricing Table */}
         <div className="max-w-5xl mx-auto">
-          <PricingTable
-            appearance={{
-              elements: {
-                pricingTable: {
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                  gap: "1.5rem",
-                },
-                pricingTableCard: {
-                  borderRadius: "1rem",
-                  border: "1px solid rgba(228, 96, 68, 0.15)",
-                  boxShadow: "0 4px 24px rgba(228, 96, 68, 0.08)",
-                  transition: "all 0.3s ease",
-                  overflow: "hidden",
-                  background: "#ffffff",
-                },
-                pricingTableCardHeader: {
-                  background:
-                    "linear-gradient(135deg, rgb(228, 96, 68), rgb(239, 118, 84))",
-                  color: "white",
-                  borderRadius: "1rem 1rem 0 0",
-                  padding: "2rem",
-                },
-                pricingTableCardTitle: {
-                  fontSize: "1.5rem",
-                  fontWeight: "800",
-                  color: "white",
-                  marginBottom: "0.25rem",
-                },
-                pricingTableCardDescription: {
-                  fontSize: "0.9rem",
-                  color: "rgba(255, 255, 255, 0.9)",
-                  fontWeight: "500",
-                },
-                pricingTableCardFee: {
-                  color: "white",
-                  fontWeight: "800",
-                  fontSize: "2.5rem",
-                },
-                pricingTableCardFeePeriod: {
-                  color: "rgba(255, 255, 255, 0.85)",
-                  fontSize: "1rem",
-                },
-                pricingTableCardBody: {
-                  padding: "1.5rem",
-                  background: "#ffffff",
-                },
-                pricingTableCardFeatures: {
-                  marginTop: "1rem",
-                  gap: "0.75rem",
-                },
-                pricingTableCardFeature: {
-                  fontSize: "0.9rem",
-                  padding: "0.5rem 0",
-                  fontWeight: "500",
-                  color: "#64748b",
-                },
-                pricingTableCardButton: {
-                  marginTop: "1.5rem",
-                  borderRadius: "0.75rem",
-                  fontWeight: "700",
-                  padding: "0.875rem 2rem",
-                  transition: "all 0.2s ease",
-                  fontSize: "1rem",
-                  background:
-                    "linear-gradient(135deg, rgb(228, 96, 68), rgb(239, 118, 84))",
-                  border: "none",
-                  color: "white",
-                  boxShadow: "0 4px 15px rgba(228, 96, 68, 0.3)",
-                },
-                pricingTableCardPeriodToggle: {
-                  color: "#1f2937",
-                },
-              },
-            }}
-            fallback={
-              <div className="flex items-center justify-center py-20">
-                <div className="text-center space-y-4">
-                  <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
-                  <p className="text-muted-foreground text-lg font-medium">
-                    Loading pricing options...
-                  </p>
-                </div>
-              </div>
-            }
-          />
+          <PricingCards currentTier={userTier as any} />
         </div>
 
 
