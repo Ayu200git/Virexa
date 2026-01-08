@@ -1,18 +1,34 @@
-"use client";
+import { defineQuery } from "next-sanity";
+import { sanityFetch } from "@/sanity/lib/live";
+import { VenuesList } from "./VenuesList";
 
-import dynamic from "next/dynamic";
+const VENUES_QUERY = defineQuery(`
+  *[_type == "venue" && (
+    name match $search + "*" ||
+    address.city match $search + "*" ||
+    address.fullAddress match $search + "*"
+  )] | order(name asc) {
+    _id,
+    name,
+    "city": address.city,
+    "fullAddress": address.fullAddress,
+    "sessionCount": count(*[_type == "classSession" && references(^._id)])
+  }
+`);
 
-const VenuesList = dynamic(
-  () => import("./VanuesList").then((mod) => mod.VenuesList),
-  { ssr: false }
-);
+export default async function VenuesPage({
+  searchParams
+}: {
+  searchParams: Promise<{ search?: string }>
+}) {
+  const params = await searchParams;
+  const search = params.search || "";
 
-const CreateVenueDialog = dynamic(
-  () => import("./CreateVenueDialog").then((mod) => mod.CreateVenueDialog),
-  { ssr: false }
-);
+  const { data: venues } = await sanityFetch({
+    query: VENUES_QUERY,
+    params: { search },
+  });
 
-export default function VenuesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -22,10 +38,9 @@ export default function VenuesPage() {
             Manage your studio locations and facilities.
           </p>
         </div>
-        <CreateVenueDialog />
       </div>
 
-      <VenuesList />
+      <VenuesList venues={venues} />
     </div>
   );
 }

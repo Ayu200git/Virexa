@@ -8,6 +8,7 @@ import {
   SignInButton,
   UserButton,
   useAuth,
+  useUser,
 } from "@clerk/nextjs";
 import NextImage from "next/image";
 import { cn } from "@/lib/utils";
@@ -19,7 +20,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useState } from "react";
-import { MenuIcon } from "lucide-react";
+import { MenuIcon, LayoutDashboard } from "lucide-react";
 
 const navItems = [
   { href: "/classes", label: "Classes" },
@@ -30,7 +31,12 @@ const navItems = [
 export function AppHeader() {
   const pathname = usePathname();
   const { isSignedIn } = useAuth();
+  const { user } = useUser();
   const [open, setOpen] = useState(false);
+
+  const isAdmin = user?.emailAddresses?.some(
+    (email) => email.emailAddress.toLowerCase() === "ayushks2805@gmail.com"
+  );
 
   if (pathname === "/onboarding") {
     return null;
@@ -76,6 +82,23 @@ export function AppHeader() {
                 </Link>
               );
             })}
+
+          {/* Admin Link for specific user */}
+          {isSignedIn && isAdmin && (
+            <Link
+              href="/admin"
+              className={cn(
+                "flex items-center gap-1 text-sm font-medium transition-colors",
+                pathname.startsWith("/admin")
+                  ? "font-semibold text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              <span>Admin</span>
+            </Link>
+          )}
+
           <SignedOut>
             <SignInButton mode="modal">
               <button
@@ -135,6 +158,24 @@ export function AppHeader() {
                       </Link>
                     );
                   })}
+
+                {/* Mobile Admin Link */}
+                {isSignedIn && isAdmin && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setOpen(false)}
+                    className={cn(
+                      "rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 flex items-center gap-2",
+                      pathname.startsWith("/admin")
+                        ? "border border-primary/20 bg-primary/10 font-semibold text-primary"
+                        : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                    )}
+                  >
+                    <LayoutDashboard className="h-5 w-5" />
+                    Admin Dashboard
+                  </Link>
+                )}
+
                 <SignedOut>
                   <div className="mt-6 border-t pt-6">
                     <SignInButton mode="modal">

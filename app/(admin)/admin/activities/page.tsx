@@ -1,19 +1,35 @@
-"use client";
+import { defineQuery } from "next-sanity";
+import { sanityFetch } from "@/sanity/lib/live";
+import { ActivitiesList } from "./ActivitiesList";
 
-import dynamic from "next/dynamic";
+const ACTIVITIES_QUERY = defineQuery(`
+  *[_type == "activity" && (
+    name match $search + "*" ||
+    instructor match $search + "*" ||
+    category->name match $search + "*"
+  )] | order(name asc) {
+    _id,
+    name,
+    instructor,
+    tierLevel,
+    "categoryName": category->name,
+    "sessionCount": count(*[_type == "classSession" && references(^._id)])
+  }
+`);
 
-const ActivitiesList = dynamic(
-  () => import("./ActivitiesList").then((mod) => mod.ActivitiesList),
-  { ssr: false }
-);
+export default async function ActivitiesPage({
+  searchParams
+}: {
+  searchParams: Promise<{ search?: string }>
+}) {
+  const params = await searchParams;
+  const search = params.search || "";
 
-const CreateActivityDialog = dynamic(
-  () =>
-    import("./CreateActivityDialog").then((mod) => mod.CreateActivityDialog),
-  { ssr: false }
-);
+  const { data: activities } = await sanityFetch({
+    query: ACTIVITIES_QUERY,
+    params: { search },
+  });
 
-export default function ActivitiesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -23,10 +39,9 @@ export default function ActivitiesPage() {
             Manage your fitness class types and categories.
           </p>
         </div>
-        <CreateActivityDialog />
       </div>
 
-      <ActivitiesList />
+      <ActivitiesList activities={activities} />
     </div>
   );
 }

@@ -11,7 +11,7 @@ import {
 // https://www.sanity.io/docs/structure-builder-cheat-sheet
 export const structure: StructureResolver = (S) =>
   S.list()
-    .title("FitPass Studio")
+    .title("Virexa Studio")
     .items([
       // Classes Section
       S.listItem()

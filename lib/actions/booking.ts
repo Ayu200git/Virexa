@@ -162,6 +162,8 @@ export async function createBooking(sessionId: string): Promise<BookingResult> {
 
     revalidatePath("/bookings");
     revalidatePath("/classes");
+    revalidatePath("/admin/bookings");
+    revalidatePath("/admin");
 
     return {
       success: true,

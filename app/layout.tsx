@@ -7,9 +7,9 @@ export const metadata: Metadata = {
   title: "Virexa",
   description: "Fitness classes booking platform",
   icons: {
-    icon: "/virexa1.png",
-    shortcut: "/virexa1.png",
-    apple: "/virexa1.png",
+    icon: "/virexa.png",
+    shortcut: "/virexa.png",
+    apple: "/virexa.png",
   },
 };
 

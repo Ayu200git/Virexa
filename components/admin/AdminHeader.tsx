@@ -22,7 +22,7 @@ export function AdminHeader() {
           className="flex items-center gap-2 text-xl font-bold"
         >
           <Dumbbell className="h-6 w-6 text-primary" />
-          <span>FitPass Admin</span>
+          <span>Virexa Admin</span>
         </Link>
 
         <nav className="flex items-center gap-1">

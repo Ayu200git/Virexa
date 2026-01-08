@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
-import { Search, Plus, Pencil, Trash2, Loader2, MoreHorizontal } from "lucide-react";
+import { Search, MoreHorizontal, Ban, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,26 +21,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { deleteActivity } from "@/lib/actions/admin";
+import { cancelBookingAdmin } from "@/lib/actions/admin";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { CreateActivityDialog } from "./CreateActivityDialog";
 
-export interface Activity {
+export interface Booking {
   _id: string;
-  name: string;
-  instructor: string;
-  tierLevel: string;
-  categoryName: string;
-  sessionCount: number;
+  userName: string;
+  userEmail: string;
+  activityName: string;
+  startTime: string;
+  status: "confirmed" | "cancelled" | "attended";
 }
 
-interface ActivitiesListProps {
-  activities: Activity[];
+interface BookingsListProps {
+  bookings: Booking[];
 }
 
-export function ActivitiesList({ activities }: ActivitiesListProps) {
+export function BookingsList({ bookings }: BookingsListProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialSearch = searchParams.get("search") || "";
@@ -63,9 +61,9 @@ export function ActivitiesList({ activities }: ActivitiesListProps) {
     }
   }, [debouncedSearch, router, searchParams, initialSearch]);
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this activity?")) {
-      await deleteActivity(id);
+  const handleCancel = async (id: string) => {
+    if (confirm("Are you sure you want to CANCEL this booking? This cannot be undone.")) {
+      await cancelBookingAdmin(id);
     }
   };
 
@@ -77,50 +75,52 @@ export function ActivitiesList({ activities }: ActivitiesListProps) {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search activities..."
+            placeholder="Search bookings by user or class..."
             className="pl-10"
           />
         </div>
-        <CreateActivityDialog />
       </div>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Activity Name</TableHead>
-              <TableHead>Instructor</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Tier</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Class</TableHead>
+              <TableHead>Time</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {activities.length === 0 ? (
+            {bookings.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center">
-                  No results found.
+                  No bookings found.
                 </TableCell>
               </TableRow>
             ) : (
-              activities.map((activity) => (
-                <TableRow key={activity._id}>
-                  <TableCell className="font-medium">{activity.name}</TableCell>
-                  <TableCell>{activity.instructor}</TableCell>
+              bookings.map((booking) => (
+                <TableRow key={booking._id}>
                   <TableCell>
-                    <Badge variant="secondary" className="font-normal">
-                      {activity.categoryName || "Uncategorized"}
-                    </Badge>
+                    <div className="flex flex-col">
+                      <span className="font-medium">{booking.userName || "Unknown"}</span>
+                      <span className="text-xs text-muted-foreground">{booking.userEmail}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="font-medium">{booking.activityName}</TableCell>
+                  <TableCell>
+                    {new Date(booking.startTime).toLocaleString(undefined, {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant="outline"
-                      className={
-                        activity.tierLevel === 'champion' ? 'border-primary text-primary' :
-                          activity.tierLevel === 'performance' ? 'border-blue-500 text-blue-500' : ''
-                      }
+                      variant={(booking.status === 'confirmed' || booking.status === 'attended') ? 'default' : 'destructive'}
+                      className={booking.status === 'confirmed' ? 'bg-green-600 hover:bg-green-700' : ''}
                     >
-                      {activity.tierLevel?.toUpperCase() || "BASIC"}
+                      {booking.status?.toUpperCase()}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
@@ -133,17 +133,12 @@ export function ActivitiesList({ activities }: ActivitiesListProps) {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem asChild>
-                          {/* Deep link to Sanity Studio */}
-                          <Link href={`/studio/structure/activity;${activity._id}`} target="_blank">
-                            <Pencil className="mr-2 h-4 w-4" /> Edit in Studio
-                          </Link>
-                        </DropdownMenuItem>
                         <DropdownMenuItem
+                          disabled={booking.status === 'cancelled'}
                           className="text-red-600 focus:text-red-600"
-                          onClick={() => handleDelete(activity._id)}
+                          onClick={() => handleCancel(booking._id)}
                         >
-                          <Trash2 className="mr-2 h-4 w-4" /> Delete
+                          <Ban className="mr-2 h-4 w-4" /> Cancel Booking
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

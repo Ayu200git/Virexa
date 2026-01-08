@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSanityClient } from "@/lib/hooks/useSanityClient";
 import { Plus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +17,8 @@ import {
   AddressSearch,
   type AddressResult,
 } from "@/components/app/maps/AddressSearch";
+import { createVenue } from "@/lib/actions/admin";
+import { useRouter } from "next/navigation";
 
 export function CreateVenueDialog() {
   const [open, setOpen] = useState(false);
@@ -28,32 +29,37 @@ export function CreateVenueDialog() {
   });
   const [address, setAddress] = useState<AddressResult | null>(null);
 
-  const client = useSanityClient();
+  const router = useRouter();
 
   const handleCreate = async () => {
     if (!formData.name.trim()) return;
 
     setIsCreating(true);
     try {
-      await client.create({
-        _type: "venue",
+      const result = await createVenue({
         name: formData.name,
         description: formData.description || undefined,
         address: address
           ? {
-              fullAddress: address.address,
-              street: address.street,
-              city: address.city,
-              postcode: address.postcode,
-              country: address.country,
-              lat: address.lat,
-              lng: address.lng,
-            }
+            fullAddress: address.address,
+            street: address.street || "",
+            city: address.city || "",
+            postcode: address.postcode || "",
+            country: address.country || "",
+            lat: address.lat,
+            lng: address.lng,
+          }
           : undefined,
       });
-      setFormData({ name: "", description: "" });
-      setAddress(null);
-      setOpen(false);
+
+      if (result.success) {
+        setFormData({ name: "", description: "" });
+        setAddress(null);
+        setOpen(false);
+        router.refresh();
+      } else {
+        alert("Failed to create venue: " + result.error);
+      }
     } catch (error) {
       console.error("Failed to create venue:", error);
     } finally {

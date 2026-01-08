@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSanityClient } from "@/lib/hooks/useSanityClient";
 import { Plus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TIER_OPTIONS } from "@/lib/constants/subscription";
+import { createActivity } from "@/lib/actions/admin";
 
 export function CreateActivityDialog() {
   const [open, setOpen] = useState(false);
@@ -33,7 +33,6 @@ export function CreateActivityDialog() {
     tierLevel: "basic",
   });
 
-  const client = useSanityClient();
   const router = useRouter();
 
   const handleCreate = async () => {
@@ -41,22 +40,27 @@ export function CreateActivityDialog() {
 
     setIsCreating(true);
     try {
-      const newActivity = await client.create({
-        _type: "activity",
+      const result = await createActivity({
         name: formData.name,
         instructor: formData.instructor,
         duration: formData.duration,
         tierLevel: formData.tierLevel,
       });
-      setFormData({
-        name: "",
-        instructor: "",
-        duration: 60,
-        tierLevel: "basic",
-      });
-      setOpen(false);
-      // Navigate to the new activity's detail page
-      router.push(`/admin/activities/${newActivity._id}`);
+
+      if (result.success && result.id) {
+        setFormData({
+          name: "",
+          instructor: "",
+          duration: 60,
+          tierLevel: "basic",
+        });
+        setOpen(false);
+        // Opens studio in new tab for further editing
+        window.open(`/studio/structure/activity;${result.id}`, '_blank');
+        router.refresh();
+      } else {
+        alert("Failed to create activity: " + result.error);
+      }
     } catch (error) {
       console.error("Failed to create activity:", error);
     } finally {
