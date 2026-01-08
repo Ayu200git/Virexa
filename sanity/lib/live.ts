@@ -8,7 +8,7 @@ export const { sanityFetch, SanityLive } = defineLive({
     apiVersion: 'vX',
   }),
   serverToken: process.env.SANITY_API_TOKEN,
-  browserToken: null,
+  browserToken: false,
   fetchOptions: {
     revalidate: 0,
   },
